@@ -1,90 +1,108 @@
 #include "socket.h"
-#include "../base/type.h"
-#include <string.h>
-#include <endian.h>
-#include<arpa/inet.h>
 
-//faddress---------------------------------------------------------------------
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-static const in_addr_t kInaddrAny = INADDR_ANY;
-static const in_addr_t kInaddrLoopback = INADDR_LOOPBACK;
-#pragma GCC diagnostic error "-Wold-style-cast"
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>  // snprintf
+#include <sys/socket.h>
+#include <sys/uio.h>  // readv
+#include <unistd.h>
 
-faddress::faddress(const char* ip, uint16_t port, bool ipv6 /*= false*/)
+namespace sockets
 {
-    if (ipv6)
+
+
+int create_nonblocking_die(sa_family_t family)
+{
+    int sockfd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
+    if (sockfd < 0)
     {
-        memset(&addr6_, 0, sizeof addr6_);
-        addr6_.sin6_family = AF_INET6;
-        addr6_.sin6_port = htobe16(port);
-        if (::inet_pton(AF_INET6, ip, &addr6_.sin6_addr) <= 0)
-        {
-            //LOG_SYSERR << "sockets::fromIpPort";
-        }
+        //LOG_SYSFATAL << "sockets::createNonblockingOrDie";
     }
-    else
+    return sockfd;
+}
+
+int connect(int sockfd, const struct sockaddr* addr)
+{
+    return ::connect(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
+}
+
+void bind(int sockfd, const struct sockaddr* addr)
+{
+    int ret = ::bind(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
+    if (ret < 0)
     {
-        memset(&addr_, 0, sizeof addr_);
-        addr_.sin_family = AF_INET;
-        addr_.sin_port = htobe16(port);
-        if (::inet_pton(AF_INET, ip, &addr_.sin_addr) <= 0)
-        {
-            //LOG_SYSERR << "sockets::fromIpPort";
-        }
+        //LOG_SYSFATAL << "sockets::bindOrDie";
     }
 }
 
-faddress::faddress(uint16_t port, bool loop_back_only, bool ipv6 /*= false*/)
+void listen(int sockfd)
 {
-    if (ipv6)
+    int ret = ::listen(sockfd, SOMAXCONN);
+    if (ret < 0)
     {
-        memset(&addr6_, 0, sizeof addr6_);
-        addr6_.sin6_family = AF_INET6;
-        in6_addr ip = loop_back_only ? in6addr_loopback : in6addr_any;
-        addr6_.sin6_addr = ip;
-        addr6_.sin6_port = htobe16(port);
-    }
-    else
-    {
-        memset(&addr_, 0, sizeof addr_);
-        addr_.sin_family = AF_INET;
-        in_addr_t ip = loop_back_only ? kInaddrLoopback : kInaddrAny;
-        addr_.sin_addr.s_addr = htobe32(ip);
-        addr_.sin_port = htobe16(port);
+        //LOG_SYSFATAL << "sockets::listenOrDie";
     }
 }
 
-std::string faddress::ip() const
+int accept(int sockfd, struct sockaddr* addr)
 {
-    char buf[64] = "";
-    int size = sizeof buf;
-    if (sa_.sa_family == AF_INET)
-    {
-        assert(size >= INET_ADDRSTRLEN);
-        ::inet_ntop(AF_INET, &addr_.sin_addr, buf, static_cast<socklen_t>(size));
-    }
-    else if (sa_.sa_family == AF_INET6)
-    {
-        assert(size >= INET6_ADDRSTRLEN);
-        ::inet_ntop(AF_INET6, &addr6_.sin6_addr, buf, static_cast<socklen_t>(size));
-    }
-
-  return buf;
+    socklen_t addrlen = static_cast<socklen_t>(sizeof *addr);
+    int connfd = ::accept(sockfd, addr, &addrlen);
+    return connfd;
 }
 
-uint16_t faddress::port() const
+ssize_t read(int sockfd, void *buf, size_t count)
 {
-    return be16toh(addr_.sin_port);
+    return ::read(sockfd, buf, count);
 }
-//faddress---------------------------------------------------------------------
 
-//acceptor---------------------------------------------------------------------
-acceptor::acceptor(const faddress& addr, bool reuseport)
-{}
+ssize_t readv(int sockfd, const struct iovec *iov, int iovcnt)
+{
+    return ::readv(sockfd, iov, iovcnt);
+}
 
-acceptor::~acceptor()
-{}
+ssize_t write(int sockfd, const void *buf, size_t count)
+{
+    return ::write(sockfd, buf, count);
+}
 
-void acceptor::set_listening()
-{}
-//acceptor---------------------------------------------------------------------
+void close(int sockfd)
+{
+    if (::close(sockfd) < 0)
+    {
+        //LOG_SYSERR << "sockets::close";
+    }
+}
+
+ void set_tcp_delay(int sockfd, bool on)
+{
+    int optval = on ? 1 : 0;
+    ::setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY,
+                &optval, static_cast<socklen_t>(sizeof optval));
+}
+    
+void set_reuse_addr(int sockfd, bool on)
+{
+    int optval = on ? 1 : 0;
+    ::setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,
+                &optval, static_cast<socklen_t>(sizeof optval));
+}
+
+void set_reuse_port(int sockfd, bool on)
+{
+      int optval = on ? 1 : 0;
+  int ret = ::setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT,
+                         &optval, static_cast<socklen_t>(sizeof optval));
+    if (ret < 0 && on)
+    {
+        //LOG_SYSERR << "SO_REUSEPORT failed.";
+    }
+}
+
+void set_keep_alive(int sockfd, bool on)
+{
+    int optval = on ? 1 : 0;
+    ::setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE,
+               &optval, static_cast<socklen_t>(sizeof optval));
+}
+}

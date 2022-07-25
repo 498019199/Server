@@ -1,61 +1,26 @@
 #ifndef __NET_SOCKET__H__
 #define __NET_SOCKET__H__
-#include <netinet/in.h>
-#include <bits/sockaddr.h>
+#include <arpa/inet.h>
 
-#include <stdint.h>
-#include <string>
-#include <functional>
-
-class faddress
+namespace sockets
 {
-public:
-    explicit faddress(const struct sockaddr_in& addr)
-        :addr_(addr)
-    {
-    }
+    // 创建非阻塞套接字文件描述符
+    int create_nonblocking_die(sa_family_t family);
+    int  connect(int sockfd, const struct sockaddr* addr);
+    void bind(int sockfd, const struct sockaddr* addr);
+    void listen(int sockfd);
+    int  accept(int sockfd, struct sockaddr_in6* addr);
+    ssize_t read(int sockfd, void *buf, size_t count);
+    ssize_t readv(int sockfd, const struct iovec *iov, int iovcnt);
+    ssize_t write(int sockfd, const void *buf, size_t count);
+    void close(int sockfd);
 
-    explicit faddress(const struct sockaddr_in6& addr)
-        :addr6_(addr)
-    {
-    }
-
-    // 使用ip和port 创建地址
-    // ip 是"1.2.3.4""
-    faddress(const char* ip, uint16_t port, bool ipv6 = false);
-
-    //使用给定的端口号构造端点。
-    //主要用于TcpServer侦听。
-    faddress(uint16_t port, bool loop_back_only, bool ipv6 = false);
-    
-    sa_family_t family() const { return addr_.sin_family; }
-    std::string ip() const;
-    uint16_t port() const;
-private:
-    union 
-    {
-        struct sockaddr sa_;
-        struct sockaddr_in addr_;
-        struct sockaddr_in6 addr6_;
-    };
-    
+    void set_tcp_delay(int sockfd, bool on);
+    void set_reuse_addr(int sockfd, bool on);
+    void set_reuse_port(int sockfd, bool on);
+    void set_keep_alive(int sockfd, bool on);
 };
 
-class acceptor
-{
-public:
-    typedef std::function<void(int sockfd, const faddress&)> new_connction_func;
-
-    acceptor(const faddress& addr, bool reuseport);
-    ~acceptor();
-
-    void set_func(const new_connction_func& func) { new_connction_func_ = func;}
-    void set_listening();
-    bool get_listening() { return listening_; }
-private:
-    new_connction_func new_connction_func_;
-    bool listening_;
-};
 
 class i_socket
 {};
