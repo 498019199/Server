@@ -1,7 +1,11 @@
 #ifndef __NET_SOCKET__H__
 #define __NET_SOCKET__H__
 #include <netinet/in.h>
+#include <bits/sockaddr.h>
+
 #include <stdint.h>
+#include <string>
+#include <functional>
 
 class faddress
 {
@@ -23,14 +27,14 @@ public:
     //使用给定的端口号构造端点。
     //主要用于TcpServer侦听。
     faddress(uint16_t port, bool loop_back_only, bool ipv6 = false);
-
-    const struct sockaddr* get_sockadd() const; 
+    
     sa_family_t family() const { return addr_.sin_family; }
     std::string ip() const;
     uint16_t port() const;
 private:
     union 
     {
+        struct sockaddr sa_;
         struct sockaddr_in addr_;
         struct sockaddr_in6 addr6_;
     };
@@ -47,7 +51,7 @@ public:
 
     void set_func(const new_connction_func& func) { new_connction_func_ = func;}
     void set_listening();
-    bool get_listening() { return listening_};
+    bool get_listening() { return listening_; }
 private:
     new_connction_func new_connction_func_;
     bool listening_;

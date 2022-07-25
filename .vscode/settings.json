@@ -1,0 +1,23 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+
+        ".landscape": true,
+        ".cache": true,
+        ".bash_history": true,
+        ".bashrc": true,
+        ".bash_logout": true,
+        ".browse.VC.db-shm": true,
+        ".browse.VC.db-wal":true,
+        ".browse.VC.db":true,
+        ".motd_shown": true,
+        ".profile": true,
+        ".sudo_as_admin_successful": true,
+    },
+    "C_Cpp.errorSquiggles": "Enabled"
+}

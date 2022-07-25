@@ -1,5 +1,5 @@
-cmake_minimum_required(VRESION 2.8)
-project(test)
+cmake_minimum_required(VERSION 3.2)
+project(demo_rpc)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     message(STATUS "current platform: Linux")
@@ -15,9 +15,20 @@ else()
 endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 include_directories(
-    "shared/*/*.h",
+    ${PROJECT_SOURCE_DIR}/shared/base/*.h,
+    ${PROJECT_SOURCE_DIR}/shared/net/*.h,
 )
 
-add_executable(
-    main.cpp
+# 共享库
+set(NET_SOURCES
+    ${PROJECT_SOURCE_DIR}/shared/net/socket.cc
+    ${PROJECT_SOURCE_DIR}/shared/net/connect.cc)
+add_library(SHARED_LIB ${NET_SOURCES})
+
+message(STATUS "------------------------------")
+message("${PROJECT_SOURCE_DIR}/shared/net/socket.cc")
+
+add_executable(${PROJECT_NAME}
+    main.cc 
 )
+target_link_libraries(${PROJECT_NAME} SHARED_LIB)

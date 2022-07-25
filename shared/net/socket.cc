@@ -1,6 +1,5 @@
 #include "socket.h"
-#include "base/type.h"
-
+#include "../base/type.h"
 #include <string.h>
 #include <endian.h>
 #include<arpa/inet.h>
@@ -55,23 +54,16 @@ faddress::faddress(uint16_t port, bool loop_back_only, bool ipv6 /*= false*/)
     }
 }
 
-const struct sockaddr* faddress::get_sockadd() const
-{
-    return static_cast<struct sockaddr*>(implicit_cast<void*>(addr6_));
-}
-
 std::string faddress::ip() const
 {
-    auto addr = get_sockadd();
     char buf[64] = "";
     int size = sizeof buf;
-    
-    if (addr->sa_family == AF_INET)
+    if (sa_.sa_family == AF_INET)
     {
         assert(size >= INET_ADDRSTRLEN);
         ::inet_ntop(AF_INET, &addr_.sin_addr, buf, static_cast<socklen_t>(size));
     }
-    else if (addr->sa_family == AF_INET6)
+    else if (sa_.sa_family == AF_INET6)
     {
         assert(size >= INET6_ADDRSTRLEN);
         ::inet_ntop(AF_INET6, &addr6_.sin6_addr, buf, static_cast<socklen_t>(size));
