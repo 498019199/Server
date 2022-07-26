@@ -1,11 +1,11 @@
 #include "socket.h"
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>  // snprintf
-#include <sys/socket.h>
-#include <sys/uio.h>  // readv
 #include <unistd.h>
+#include <sys/uio.h>  // readv
+
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <stdio.h>  // snprintf
 
 namespace sockets
 {
@@ -76,6 +76,7 @@ void close(int sockfd)
 
  void set_tcp_delay(int sockfd, bool on)
 {
+    // 减少小包的数量
     int optval = on ? 1 : 0;
     ::setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY,
                 &optval, static_cast<socklen_t>(sizeof optval));
@@ -83,6 +84,7 @@ void close(int sockfd)
     
 void set_reuse_addr(int sockfd, bool on)
 {
+    //打开或关闭地址复用功能
     int optval = on ? 1 : 0;
     ::setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,
                 &optval, static_cast<socklen_t>(sizeof optval));
@@ -90,8 +92,9 @@ void set_reuse_addr(int sockfd, bool on)
 
 void set_reuse_port(int sockfd, bool on)
 {
-      int optval = on ? 1 : 0;
-  int ret = ::setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT,
+    //端口释放后立即就可以被再次使用
+    int optval = on ? 1 : 0;
+    int ret = ::setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT,
                          &optval, static_cast<socklen_t>(sizeof optval));
     if (ret < 0 && on)
     {
@@ -101,6 +104,7 @@ void set_reuse_port(int sockfd, bool on)
 
 void set_keep_alive(int sockfd, bool on)
 {
+    //套接字保活。
     int optval = on ? 1 : 0;
     ::setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE,
                &optval, static_cast<socklen_t>(sizeof optval));

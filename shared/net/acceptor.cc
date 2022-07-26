@@ -1,4 +1,6 @@
 #include "acceptor.h"
+#include "socket.h"
+#include "address.h"
 
 acceptor::acceptor(const faddress& addr, bool reuseport)
     :accept_fd_(sockets::create_nonblocking_die(addr.family())),

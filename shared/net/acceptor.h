@@ -2,9 +2,9 @@
 #define __NET_ACCEPTOR__H__
 
 #include <functional>
-#include "socket.h"
-#include "acceptor.h"
 
+
+class faddress;
 class acceptor
 {
 public:
