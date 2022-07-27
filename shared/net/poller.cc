@@ -1,9 +1,13 @@
 #include "poller.h"
+#include "channel.h"
 
 #include <assert.h>
+#include <cstring>
 
 #include <poll.h>
 #include <sys/epoll.h>
+#include <unistd.h>
+#include <errno.h>
 
 // On Linux, the constants of poll(2) and epoll(4)
 // are expected to be the same.
@@ -15,8 +19,14 @@ static_assert(EPOLLERR == POLLERR,      "epoll uses same flag values as poll");
 static_assert(EPOLLHUP == POLLHUP,      "epoll uses same flag values as poll");
 
 poller::poller(event_loop* loop)
-    :
+    :loop_(loop),
+    epoll_fd_(::epoll_create1(EPOLL_CLOEXEC)),
+    event_list_(kInitEventListSize)
 {
+    if (epoll_fd_ < 0)
+    {
+        //LOG_SYSFATAL << "EPollPoller::EPollPoller";
+    }
 }
 
 poller::~poller()
@@ -72,7 +82,7 @@ void poller::remove_channel(channel* chan)
     int fd = chan->fd();
     //LOG_TRACE << "fd = " << fd;
     assert(chans_.find(fd) != chans_.end());
-    assert(chans_[fd] == channel);
+    assert(chans_[fd] == chan);
     assert(chan->is_no_event());
     int index = chan->index();
     assert(index == kAdded || index == kDeleted);
@@ -82,9 +92,43 @@ void poller::remove_channel(channel* chan)
 
     if (index == kAdded)
     {
-        update(EPOLL_CTL_DEL, channel);
+        update(EPOLL_CTL_DEL, chan);
     }
     chan->set_index(kNew);
+}
+
+int poller::poll(int timeout, std::vector<channel*>* active_chans)
+{
+    //LOG_TRACE << "fd total count " << channels_.size();
+    int event_num = ::epoll_wait(epoll_fd_,
+                                &*event_list_.begin(),
+                                static_cast<int>(event_list_.size()),
+                                timeout);
+    int saved_errno = errno;
+    if (event_num > 0)
+    {
+        //LOG_TRACE << numEvents << " events happened";
+        fill_active_channels(event_num, active_chans);
+        if (static_cast<size_t>(event_num) == event_list_.size())
+        {
+            event_list_.resize(event_list_.size()*2);
+        }
+    }
+    else if (event_num == 0)
+    {
+        //LOG_TRACE << "nothing happened";
+    }
+    else
+    {
+        // error happens, log uncommon ones
+        if (saved_errno != EINTR)
+        {
+            errno = saved_errno;
+            //LOG_SYSERR << "EPollPoller::poll()";
+        }
+    }
+
+    return 0;
 }
 
 void poller::update(int operation, channel* chan)
@@ -96,7 +140,7 @@ void poller::update(int operation, channel* chan)
     int fd = chan->fd();
     //LOG_TRACE << "epoll_ctl op = " << operationToString(operation)
         //<< " fd = " << fd << " event = { " << chan->eventsToString() << " }";
-    if (::epoll_ctl(epollfd_, operation, fd, &event) < 0)
+    if (::epoll_ctl(epoll_fd_, operation, fd, &event) < 0)
     {
         if (operation == EPOLL_CTL_DEL)
         {
@@ -106,6 +150,23 @@ void poller::update(int operation, channel* chan)
         {
             //LOG_SYSFATAL << "epoll_ctl op =" << operationToString(operation) << " fd =" << fd;
         }
+    }
+}
+
+void poller::fill_active_channels(int num_event, std::vector<channel*>* active_chans) const
+{
+    assert(static_cast<size_t>(num_event) <= events_.size());
+    for (int i = 0; i < num_event; ++i)
+    {
+        channel* chan = static_cast<channel*>(events_[i].data.ptr);
+#ifndef NDEBUG
+        int fd = chan->fd();
+        auto it = chans_.find(fd);
+        assert(it != chans_.end());
+        assert(it->second == chan);
+#endif
+        chan->set_revents(events_[i].events);
+        active_chans->push_back(chan);
     }
 }
 

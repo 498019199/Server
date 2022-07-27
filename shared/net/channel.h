@@ -1,6 +1,6 @@
 #ifndef __NET_CHANNEL__H__
 #define __NET_CHANNEL__H__
-#include "loop_event.h"
+class event_loop;
 
 class channel
 {
@@ -12,6 +12,7 @@ public:
 
     int fd() const { return fd_; }
     int events() const { return events_; }
+    void set_revents(int revt) { revents_ = revt; } // used by pollers
     bool is_no_event() const { return events_ == kNoneEvent;}
     // for Poller
     int index() { return index_; }

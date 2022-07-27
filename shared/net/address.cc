@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <endian.h>
+#include <assert.h>
 #include<arpa/inet.h>
 
 //faddress---------------------------------------------------------------------

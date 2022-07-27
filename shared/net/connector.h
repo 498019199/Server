@@ -3,6 +3,7 @@
 
 #include "address.h"
 
+// 连接器
 class connector
 {
 public:

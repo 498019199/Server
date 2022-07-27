@@ -7,6 +7,7 @@
 #include "channel.h"
 #include "event_loop.h"
 
+// 接收器
 class acceptor
 {
 public:

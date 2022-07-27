@@ -18,6 +18,7 @@ public:
 
     ~tcp_server();
 
+    void start();
 private:
     void new_connetction(int sockfd, const faddress& addr);
 private:
@@ -26,5 +27,10 @@ private:
     int port;
     std::unique_ptr<faddress> acceptor_;
     int next_conne_id_;
+
+    ConnectionCallback connectionCallback_;
+    MessageCallback messageCallback_;
+    WriteCompleteCallback writeCompleteCallback_;
+    ThreadInitCallback threadInitCallback_;
 };
 #endif // __NET_TCP_SERVER__H__
