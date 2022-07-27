@@ -22,12 +22,4 @@ namespace sockets
 };
 
 
-class i_socket
-{};
-
-class tpc_socket : public i_socket
-{};
-
-class upd_socket : public i_socket
-{};
 #endif//__NET_SOCKET__H__
