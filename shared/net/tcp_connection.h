@@ -15,7 +15,11 @@ private:
         kDisconnecting,
     };
 public:
-    tcp_connection(/* args */);
+    tcp_connection(event_loop* loop,
+                    const std::string name,
+                    int sockfd,
+                    const faddress& local_addr,
+                    const faddress& peer_addr);
     ~tcp_connection();
 
     void set_state(Connection_State state);
@@ -30,12 +34,14 @@ public:
     void handle_close();
     void handle_error();
 private:
-    event_loop* loop;
+    event_loop* loop_;
     std::string name_;
     bool reading_;
     Connection_State state_;
     
     int sock_fd_;
+    const faddress local_addr_;
+    const faddress peer_addr_;
     std::unique_ptr<channel> chan_;
     std::string input_buff_;
     std::string output_buff_;

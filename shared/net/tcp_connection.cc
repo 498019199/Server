@@ -3,9 +3,23 @@
 
 #include<memory>
 
-tcp_connection::tcp_connection(/* args */)
+tcp_connection::tcp_connection(event_loop* loop,
+                    const std::string name,
+                    int sockfd,
+                    const faddress& local_addr,
+                    const faddress& peer_addr)
+                    :loop_(loop),
+                    name_(name),
+                    state_(kConnected),
+                    reading_(true),
+                    sock_fd_(sockfd),
+                    chan_(new channel(loop, sockfd)),
+                    local_addr_(local_addr),
+                    peer_addr_(peer_addr)
 {
+    
 }
+
 
 void tcp_connection::set_state(Connection_State state)
 {

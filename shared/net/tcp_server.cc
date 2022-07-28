@@ -32,7 +32,11 @@ void tcp_server::new_connetction(int sockfd, const faddress& addr)
     //     << "] - new connection [" << conn_name
     //     << "] from " << addr.ip() << ":" << addr.port();
     faddress local_addr(sockets::get_addr(sockfd));
-    tcp_connection_ptr conn(new tcp_connection());
+    tcp_connection_ptr conn(new tcp_connection(loop_, 
+                                            conn_name,
+                                            sockfd,
+                                            local_addr,
+                                            addr));
     
     connection_map_[conn_name] = conn;
     conn->set_connection_callback(connnection_callback_);
