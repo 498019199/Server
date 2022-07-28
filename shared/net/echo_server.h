@@ -9,7 +9,7 @@ class faddress;
 class echo_server
 {
 public:
-    echo_server(event_loop* loop, const faddress& addr, const char* name_args);
+    echo_server(event_loop* loop, const faddress& addr);
 
     ~echo_server();
 

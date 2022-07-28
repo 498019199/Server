@@ -1,10 +1,14 @@
 #include "tcp_server.h"
 #include "socket.h"
 #include "acceptor.h"
+#include "address.h"
 #include <functional>
 
 
-tcp_server::tcp_server(event_loop* loop, const faddress& listen_addr, std::string name_args, Option opt)
+tcp_server::tcp_server(event_loop* loop, 
+                    const faddress& listen_addr, 
+                    std::string name_args, 
+                    Option opt/* = kNoReusePort*/)
     :loop_(loop),
     acceptor_(new acceptor(loop, listen_addr, opt == kReusePort)),
     name_(name_args),
@@ -27,7 +31,7 @@ void tcp_server::new_connetction(int sockfd, const faddress& addr)
     // LOG_INFO << "TcpServer::newConnection [" << name_
     //     << "] - new connection [" << conn_name
     //     << "] from " << addr.ip() << ":" << addr.port();
-    faddress addr(sockets::get_addr(sockfd));
+    faddress local_addr(sockets::get_addr(sockfd));
     tcp_connection_ptr conn(new tcp_connection());
     
     connection_map_[conn_name] = conn;

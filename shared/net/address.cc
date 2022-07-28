@@ -35,7 +35,7 @@ faddress::faddress(const char* ip, uint16_t port, bool ipv6 /*= false*/)
     }
 }
 
-faddress::faddress(uint16_t port, bool loop_back_only, bool ipv6 /*= false*/)
+faddress::faddress(uint16_t port /*= 0*/, bool loop_back_only /*= false*/, bool ipv6 /*= false*/)
 {
     if (ipv6)
     {

@@ -1,5 +1,5 @@
 #include "socket.h"
-#include "base/Type.h"
+#include "base/type.h"
 
 #include <string.h>  // memset
 
@@ -46,10 +46,10 @@ void listen(int sockfd)
     }
 }
 
-int accept(int sockfd, struct sockaddr* addr)
+int accept(int sockfd, struct sockaddr_in6* addr)
 {
     socklen_t addrlen = static_cast<socklen_t>(sizeof *addr);
-    int connfd = ::accept(sockfd, addr, &addrlen);
+    int connfd = ::accept(sockfd, sockaddr_cast(addr), &addrlen);
     return connfd;
 }
 
@@ -139,27 +139,27 @@ int get_socket_error(int sockfd)
     }
 }
 
-const struct sockaddr* sockets::sockaddr_cast(const struct sockaddr_in6* addr)
+const struct sockaddr* sockaddr_cast(const struct sockaddr_in6* addr)
 {
   return static_cast<const struct sockaddr*>(implicit_cast<const void*>(addr));
 }
 
-struct sockaddr* sockets::sockaddr_cast(struct sockaddr_in6* addr)
+struct sockaddr* sockaddr_cast(struct sockaddr_in6* addr)
 {
   return static_cast<struct sockaddr*>(implicit_cast<void*>(addr));
 }
 
-const struct sockaddr* sockets::sockaddr_cast(const struct sockaddr_in* addr)
+const struct sockaddr* sockaddr_cast(const struct sockaddr_in* addr)
 {
   return static_cast<const struct sockaddr*>(implicit_cast<const void*>(addr));
 }
 
-const struct sockaddr_in* sockets::sockaddr_in_cast(const struct sockaddr* addr)
+const struct sockaddr_in* sockaddr_in_cast(const struct sockaddr* addr)
 {
   return static_cast<const struct sockaddr_in*>(implicit_cast<const void*>(addr));
 }
 
-const struct sockaddr_in6* sockets::sockaddr_in6_cast(const struct sockaddr* addr)
+const struct sockaddr_in6* sockaddr_in6_cast(const struct sockaddr* addr)
 {
   return static_cast<const struct sockaddr_in6*>(implicit_cast<const void*>(addr));
 }

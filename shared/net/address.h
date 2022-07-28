@@ -27,8 +27,9 @@ public:
 
     //使用给定的端口号构造端点。
     //主要用于TcpServer侦听。
-    faddress(uint16_t port, bool loop_back_only, bool ipv6 = false);
+    faddress(uint16_t port = 0, bool loop_back_only = false, bool ipv6 = false);
 
+    void set_sockaddr_inet6(const struct sockaddr_in6& addr6) { addr6_ = addr6; }
     const struct sockaddr* get_sockaddr() const { return &sa_; }
     sa_family_t family() const { return addr_.sin_family; }
     std::string ip() const;

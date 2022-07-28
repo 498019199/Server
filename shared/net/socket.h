@@ -12,7 +12,7 @@ class event_loop;
 class channel;
 class faddress;
 class tcp_connection;
-
+class acceptor;
 
 using std::placeholders::_1;
 using std::placeholders::_2;

@@ -14,7 +14,10 @@ public:
         kReusePort,
     };
 
-    tcp_server(event_loop* loop, const faddress& listen_addr, std::string name_args, Option opt);
+    tcp_server(event_loop* loop, 
+            const faddress& listen_addr, 
+            std::string name_args, 
+            Option opt = kNoReusePort);
 
     ~tcp_server();
 
@@ -27,7 +30,7 @@ private:
     std::string name_;
     std::string ip;
     int port;
-    std::unique_ptr<faddress> acceptor_;
+    std::unique_ptr<acceptor> acceptor_;
     int next_conne_id_;
 
     event_loop* loop_;
