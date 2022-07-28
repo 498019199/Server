@@ -35,7 +35,7 @@ private:
 private:
     channel_map chans_;
     event_loop* loop_;
-    event_list event_list_;
+    event_list events_;
 
     int epoll_fd_;
 };

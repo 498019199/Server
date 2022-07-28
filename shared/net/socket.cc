@@ -1,8 +1,10 @@
 #include "socket.h"
+#include "base/Type.h"
+
+#include <string.h>  // memset
 
 #include <unistd.h>
 #include <sys/uio.h>  // readv
-
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <stdio.h>  // snprintf
@@ -110,15 +112,16 @@ void set_keep_alive(int sockfd, bool on)
                &optval, static_cast<socklen_t>(sizeof optval));
 }
 
-struct sockaddr_in6 sockets::get_addr(int sockfd)
+struct sockaddr_in6 get_addr(int sockfd)
 {
     struct sockaddr_in6 addr;
-    memset(&addr, 0, sizeof addr);
+    memZero(&addr, sizeof addr);
     socklen_t addrlen = static_cast<socklen_t>(sizeof addr);
     if (::getsockname(sockfd, sockaddr_cast(&addr), &addrlen) < 0)
     {
         //LOG_SYSERR << "sockets::getLocalAddr";
     }
+
     return addr;
 }
 
@@ -135,4 +138,31 @@ int get_socket_error(int sockfd)
         return optval;
     }
 }
+
+const struct sockaddr* sockets::sockaddr_cast(const struct sockaddr_in6* addr)
+{
+  return static_cast<const struct sockaddr*>(implicit_cast<const void*>(addr));
+}
+
+struct sockaddr* sockets::sockaddr_cast(struct sockaddr_in6* addr)
+{
+  return static_cast<struct sockaddr*>(implicit_cast<void*>(addr));
+}
+
+const struct sockaddr* sockets::sockaddr_cast(const struct sockaddr_in* addr)
+{
+  return static_cast<const struct sockaddr*>(implicit_cast<const void*>(addr));
+}
+
+const struct sockaddr_in* sockets::sockaddr_in_cast(const struct sockaddr* addr)
+{
+  return static_cast<const struct sockaddr_in*>(implicit_cast<const void*>(addr));
+}
+
+const struct sockaddr_in6* sockets::sockaddr_in6_cast(const struct sockaddr* addr)
+{
+  return static_cast<const struct sockaddr_in6*>(implicit_cast<const void*>(addr));
+}
+
+
 }

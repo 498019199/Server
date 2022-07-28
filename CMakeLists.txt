@@ -15,18 +15,27 @@ else()
 endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 include_directories(
-    ${PROJECT_SOURCE_DIR}/shared/base/*.h,
-    ${PROJECT_SOURCE_DIR}/shared/net/*.h,
-)
+    ${PROJECT_SOURCE_DIR}/shared/)
 
 # 共享库
+set(HEADERS
+    ${PROJECT_SOURCE_DIR}/shared/base/*.h
+    ${PROJECT_SOURCE_DIR}/shared/net/*.h
+  )
+
 set(NET_SOURCES
+    ${PROJECT_SOURCE_DIR}/shared/net/acceptor.cc
+    ${PROJECT_SOURCE_DIR}/shared/net/address.cc
+    ${PROJECT_SOURCE_DIR}/shared/net/channel.cc
+    ${PROJECT_SOURCE_DIR}/shared/net/connector.cc
+    ${PROJECT_SOURCE_DIR}/shared/net/event_loop.cc 
+    ${PROJECT_SOURCE_DIR}/shared/net/echo_server.cc
+    ${PROJECT_SOURCE_DIR}/shared/net/poller.cc
     ${PROJECT_SOURCE_DIR}/shared/net/socket.cc
-    ${PROJECT_SOURCE_DIR}/shared/net/connect.cc)
+    ${PROJECT_SOURCE_DIR}/shared/net/tcp_connection.cc
+    ${PROJECT_SOURCE_DIR}/shared/net/tcp_server.cc)
 add_library(SHARED_LIB ${NET_SOURCES})
 
-message(STATUS "------------------------------")
-message("${PROJECT_SOURCE_DIR}/shared/net/socket.cc")
 
 add_executable(${PROJECT_NAME}
     main.cc 

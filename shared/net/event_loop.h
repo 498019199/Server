@@ -23,8 +23,10 @@ public:
 private:
     bool looping_;
     bool quit_;
+    bool event_handling_;
 
     std::unique_ptr<poller> poller_;
     channel_list active_chans_;
+    channel* current_chan_ptr_;
 };
 #endif//__NET_LOOP_EVENET__H__

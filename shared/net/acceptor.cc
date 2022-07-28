@@ -23,12 +23,12 @@ void acceptor::set_listening()
 void acceptor::handle_read()
 {
     faddress addr;
-    int conn_fd =sockets::accept(accept_fd_, &addr);
+    int conn_fd =sockets::accept(accept_fd_, addr.get_sockaddr());
     if (conn_fd >= 0)
     {
         if (new_connction_func_)
         {
-            new_connction_func_();
+            new_connction_func_(conn_fd, addr);
         }
         else
         {

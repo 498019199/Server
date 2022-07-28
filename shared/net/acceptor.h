@@ -3,12 +3,13 @@
 
 #include <functional>
 
+#include "base/copyable.h"
 #include "address.h"
 #include "channel.h"
 #include "event_loop.h"
 
 // 接收器
-class acceptor
+class acceptor:noncopyable
 {
 public:
     typedef std::function<void(int sockfd, const faddress&)> new_connction_func;

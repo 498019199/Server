@@ -9,6 +9,18 @@
 #include <assert.h>
 #endif
 
+///
+/// The most common stuffs.
+///
+
+
+using std::string;
+
+inline void memZero(void* p, size_t n)
+{
+  memset(p, 0, n);
+}
+
 // Taken from google-protobuf stubs/common.h
 //
 // Protocol Buffers - Google's data interchange format

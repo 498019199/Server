@@ -1,11 +1,10 @@
 #ifndef __NET_ADDRESS__H__
 #define __NET_ADDRESS__H__
-
 #include "socket.h"
 
 
-
-class tcp_connection
+class tcp_connection:noncopyable,
+                    public std::enable_shared_from_this<tcp_connection>
 {
 private:
     enum Connection_State 
@@ -21,7 +20,7 @@ public:
 
     void set_state(Connection_State state);
 
-    void set_close_callback(const close_callback_& cb) { connnection_callback_ = cb;}
+    void set_close_callback(const close_callback& cb) { connnection_callback_ = cb;}
     void set_connection_callback(const connnection_callback& cb) { connnection_callback_ = cb;}
     void set_message_callback(const message_callback& cb) { message_callback_ = cb;}
     void set_write_complete_callback(const write_complete_callback& cb) { write_complete_callback_ = cb;}

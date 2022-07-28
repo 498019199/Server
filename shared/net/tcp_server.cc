@@ -4,8 +4,9 @@
 #include <functional>
 
 
-tcp_server::tcp_server(const faddress& listen_addr, std::string name_args, Option opt)
-    :acceptor_(new acceptor(listen_addr, opt == kReusePort)),
+tcp_server::tcp_server(event_loop* loop, const faddress& listen_addr, std::string name_args, Option opt)
+    :loop_(loop),
+    acceptor_(new acceptor(loop, listen_addr, opt == kReusePort)),
     name_(name_args),
     next_conne_id_(1)
 {

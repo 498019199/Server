@@ -2,7 +2,6 @@
 #define __NET_TCP_SERVER__H__
 #include "socket.h"
 #include <map>
-class faddress;
 
 class tcp_server
 {
@@ -15,7 +14,7 @@ public:
         kReusePort,
     };
 
-    tcp_server(const faddress& listen_addr, std::string name_args, Option opt);
+    tcp_server(event_loop* loop, const faddress& listen_addr, std::string name_args, Option opt);
 
     ~tcp_server();
 
@@ -30,6 +29,8 @@ private:
     int port;
     std::unique_ptr<faddress> acceptor_;
     int next_conne_id_;
+
+    event_loop* loop_;
 
     connnection_callback connnection_callback_;
     message_callback message_callback_;

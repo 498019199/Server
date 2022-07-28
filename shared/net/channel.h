@@ -1,14 +1,21 @@
 #ifndef __NET_CHANNEL__H__
 #define __NET_CHANNEL__H__
-class event_loop;
+#include "socket.h"
 
-class channel
+class channel :public noncopyable
 {
     static const int kNoneEvent;
     static const int kReadEvent;
     static const int kWriteEvent;
 public:
     channel(event_loop* loop, int fd);
+    ~channel();
+
+    void handle_event(int receive_time);
+    void set_read_callback(read_event_callback cb){ read_callback_ = std::move(cb); }
+    void set_write_callback(event_callback cb){ write_callback_ = std::move(cb); }
+    void set_close_callback(event_callback cb){ close_callback_ = std::move(cb); }
+    void set_error_callback(event_callback cb){ error_callback_ = std::move(cb); }
 
     int fd() const { return fd_; }
     int events() const { return events_; }
@@ -24,5 +31,10 @@ private:
     int        events_;
     int        revents_; // it's the received event types of epoll or poll
     int        index_; // used by Poller.
+
+    read_event_callback read_callback_;
+    event_callback write_callback_;
+    event_callback close_callback_;
+    event_callback error_callback_;
 };
 #endif//__NET_CHANNEL__H__

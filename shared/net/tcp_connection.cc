@@ -1,4 +1,8 @@
 #include "tcp_connection.h"
+#include "channel.h"
+
+#include<memory>
+
 tcp_connection::tcp_connection(/* args */)
 {
 }
@@ -23,7 +27,7 @@ void tcp_connection::handle_read(int ts)
     }
     else if (0 == n)
     {
-        close_callback_();
+        handle_close();
     }
     else
     {

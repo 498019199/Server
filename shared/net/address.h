@@ -1,12 +1,14 @@
 #ifndef __NET_ADDRESS__H__
 #define __NET_ADDRESS__H__
+
+#include "base/copyable.h"
 #include <netinet/in.h>
 #include <bits/sockaddr.h>
 
 #include <stdint.h>
 #include <string>
 
-class faddress
+class faddress : copyable
 {
 public:
     explicit faddress(const struct sockaddr_in& addr)

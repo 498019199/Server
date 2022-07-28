@@ -21,7 +21,7 @@ static_assert(EPOLLHUP == POLLHUP,      "epoll uses same flag values as poll");
 poller::poller(event_loop* loop)
     :loop_(loop),
     epoll_fd_(::epoll_create1(EPOLL_CLOEXEC)),
-    event_list_(kInitEventListSize)
+    events_(kInitEventListSize)
 {
     if (epoll_fd_ < 0)
     {
@@ -101,17 +101,17 @@ int poller::poll(int timeout, std::vector<channel*>* active_chans)
 {
     //LOG_TRACE << "fd total count " << channels_.size();
     int event_num = ::epoll_wait(epoll_fd_,
-                                &*event_list_.begin(),
-                                static_cast<int>(event_list_.size()),
+                                &*events_.begin(),
+                                static_cast<int>(events_.size()),
                                 timeout);
     int saved_errno = errno;
     if (event_num > 0)
     {
         //LOG_TRACE << numEvents << " events happened";
         fill_active_channels(event_num, active_chans);
-        if (static_cast<size_t>(event_num) == event_list_.size())
+        if (static_cast<size_t>(event_num) == events_.size())
         {
-            event_list_.resize(event_list_.size()*2);
+            events_.resize(events_.size()*2);
         }
     }
     else if (event_num == 0)

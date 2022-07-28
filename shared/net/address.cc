@@ -1,5 +1,4 @@
 #include "address.h"
-#include "shared/base/type.h"
 
 #include <string.h>
 #include <endian.h>
