@@ -3,15 +3,23 @@
 
 #include "socket.h"
 
-class event_loop;
+
 
 class tcp_connection
 {
 private:
-    /* data */
+    enum Connection_State 
+    { 
+        kDisconnected, 
+        kConnecting, 
+        kConnected, 
+        kDisconnecting,
+    };
 public:
     tcp_connection(/* args */);
     ~tcp_connection();
+
+    void set_state(Connection_State state);
 
     void set_close_callback(const close_callback_& cb) { connnection_callback_ = cb;}
     void set_connection_callback(const connnection_callback& cb) { connnection_callback_ = cb;}
@@ -26,7 +34,10 @@ private:
     event_loop* loop;
     std::string name_;
     bool reading_;
-
+    Connection_State state_;
+    
+    int sock_fd_;
+    std::unique_ptr<channel> chan_;
     std::string input_buff_;
     std::string output_buff_;
 

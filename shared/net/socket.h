@@ -2,6 +2,9 @@
 #define __NET_SOCKET__H__
 #include <arpa/inet.h>
 
+class event_loop;
+class channel;
+
 #include <memory>
 #include <string>
 #include <functional>
@@ -35,6 +38,7 @@ namespace sockets
     void set_keep_alive(int sockfd, bool on);
 
     struct sockaddr_in6 sockets::get_addr(int sockfd);
+    int get_socket_error(int sockfd);
 };
 
 
