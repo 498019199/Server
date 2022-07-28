@@ -109,4 +109,16 @@ void set_keep_alive(int sockfd, bool on)
     ::setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE,
                &optval, static_cast<socklen_t>(sizeof optval));
 }
+
+struct sockaddr_in6 sockets::get_addr(int sockfd)
+{
+    struct sockaddr_in6 addr;
+    memset(&addr, 0, sizeof addr);
+    socklen_t addrlen = static_cast<socklen_t>(sizeof addr);
+    if (::getsockname(sockfd, sockaddr_cast(&addr), &addrlen) < 0)
+    {
+        //LOG_SYSERR << "sockets::getLocalAddr";
+    }
+    return addr;
+}
 }

@@ -17,9 +17,13 @@ public:
 
     ~acceptor();
 
-    void set_func(const new_connction_func& func) { new_connction_func_ = func;}
+    void set_new_connnect_callback(const new_connction_func& func) { new_connction_func_ = func;}
     void set_listening();
     bool get_listening() { return listening_; }
+
+private:
+
+    void handle_read();
 private:
     int accept_fd_;
     bool listening_;
