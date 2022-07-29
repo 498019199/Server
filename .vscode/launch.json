@@ -8,10 +8,10 @@
             "request": "launch",
             "name" : "Launch",
             "type": "cppdbg",
-            "program": "${workspaceFolder}/code/test_react/a.out", // 将要进行调试的程序的路径
+            "program": "${workspaceFolder}/build/demo_rpc", // 将要进行调试的程序的路径
             "args": [], // 程序调试时传递给程序的命令行参数，一般设为空
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/code/test_react/", // 调试程序时的工作目录，此为工作区文件夹；改成${fileDirname}可变为文件所在目录
+            "cwd": "${workspaceFolder}/", // 调试程序时的工作目录，此为工作区文件夹；改成${fileDirname}可变为文件所在目录
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -23,7 +23,7 @@
                 }
             ],
             "miDebuggerPath": "/usr/bin/gdb",
-            "preLaunchTask": "cmake_build" // 调试前执行的任务，一般为编译程序。与tasks.json的label相对应
+            //"preLaunchTask": "cmake_build" // 调试前执行的任务，一般为编译程序。与tasks.json的label相对应
         }
     ]
 }
