@@ -1,6 +1,7 @@
 #include "tcp_server.h"
 #include "socket.h"
 #include "acceptor.h"
+#include "tcp_connection.h"
 #include "address.h"
 #include <functional>
 
@@ -51,3 +52,4 @@ void tcp_server::remove_connection(const tcp_connection_ptr& conn)
 {
 
 }
+

@@ -25,12 +25,29 @@ public:
     int index() { return index_; }
     void set_index(int idx) { index_ = idx; }
 
+    void enable_reeading() { events_ |= kReadEvent; update(); }
+    void disable_reading() { events_ &= ~kReadEvent; update(); }
+    void enable_writing() { events_ |= kWriteEvent; update(); }
+    void disable_writing() { events_ &= ~kWriteEvent; update(); }
+    void disable_all() { events_ = kNoneEvent; update(); }
+    bool is_writing() const { return events_ & kWriteEvent; }
+    bool is_reading() const { return events_ & kReadEvent; }
+
+    void remove();
 private:
+
+    void updata();
+private:
+    static const int kNoneEvent;
+    static const int kReadEvent;
+    static const int kWriteEvent;
+
     event_loop* loop_;
     const int  fd_;
     int        events_;
     int        revents_; // it's the received event types of epoll or poll
     int        index_; // used by Poller.
+    bool event_handling_;
 
     read_event_callback read_callback_;
     event_callback write_callback_;

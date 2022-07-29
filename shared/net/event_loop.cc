@@ -10,11 +10,13 @@ event_loop::event_loop()
 
 void event_loop::update_channel(channel* chan)
 {
-
+    poller_->update_channel(chan);
 }
 
 void event_loop::remove_channel(channel* chan)
-{}
+{
+    poller_->remove_channel(chan);
+}
 
 void event_loop::loop()
 {
