@@ -1,7 +1,7 @@
-#ifndef __NET_ADDRESS__H__
-#define __NET_ADDRESS__H__
+#ifndef __NET_TCP_CONNECTION__H__
+#define __NET_TCP_CONNECTION__H__
 #include "socket.h"
-
+#include "address.h"
 
 class tcp_connection:noncopyable,
                     public std::enable_shared_from_this<tcp_connection>
@@ -22,8 +22,12 @@ public:
                     const faddress& peer_addr);
     ~tcp_connection();
 
-    void set_state(Connection_State state);
+    event_loop* get_loop() const { return loop_; }
+    const std::string& name() const { return name_; }
+    const faddress& local_address() const { return local_addr_; }
+    const faddress& peer_address() const { return peer_addr_; }
 
+    void set_state(Connection_State state);
     void set_close_callback(const close_callback& cb) { connnection_callback_ = cb;}
     void set_connection_callback(const connnection_callback& cb) { connnection_callback_ = cb;}
     void set_message_callback(const message_callback& cb) { message_callback_ = cb;}
@@ -54,4 +58,4 @@ private:
 
 
 
-#endif//__NET_ADDRESS__H__
+#endif//__NET_TCP_CONNECTION__H__

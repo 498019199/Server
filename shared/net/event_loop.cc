@@ -8,6 +8,11 @@ event_loop::event_loop()
     :poller_(new poller(this))
 {}
 
+event_loop::~event_loop()
+{
+    
+}
+
 void event_loop::update_channel(channel* chan)
 {
     poller_->update_channel(chan);

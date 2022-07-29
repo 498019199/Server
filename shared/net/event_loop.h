@@ -12,7 +12,8 @@ class event_loop
     typedef std::vector<channel*> channel_list;
 public:
     event_loop();
-
+    ~event_loop();
+    
     void update_channel(channel* chan);
     
     void remove_channel(channel* chan);

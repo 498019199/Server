@@ -1,10 +1,20 @@
 #include "channel.h"
 #include "event_loop.h"
+#include <poll.h>
+
+const int channel::kNoneEvent = 0;
+const int channel::kReadEvent = POLLIN | POLLPRI;
+const int channel::kWriteEvent = POLLOUT;
 
 channel::channel(event_loop* loop, int fd)
     :loop_(loop),
     fd_(fd)
 {}
+
+channel::~channel()
+{
+    
+}
 
 void channel::handle_event(int receive_time)
 {
@@ -45,7 +55,7 @@ void channel::remove()
     }
 }
 
-void channel::updata()
+void channel::update()
 {
     if (loop_)
     {

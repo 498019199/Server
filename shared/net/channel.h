@@ -36,11 +36,8 @@ public:
     void remove();
 private:
 
-    void updata();
+    void update();
 private:
-    static const int kNoneEvent;
-    static const int kReadEvent;
-    static const int kWriteEvent;
 
     event_loop* loop_;
     const int  fd_;

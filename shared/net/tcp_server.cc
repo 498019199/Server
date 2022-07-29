@@ -22,6 +22,11 @@ tcp_server::tcp_server(event_loop* loop,
 tcp_server::~tcp_server()
 {}
 
+void tcp_server::start()
+{
+    
+}
+
 void tcp_server::new_connetction(int sockfd, const faddress& addr)
 {
     char buf[64];
@@ -42,7 +47,7 @@ void tcp_server::new_connetction(int sockfd, const faddress& addr)
     connection_map_[conn_name] = conn;
     conn->set_connection_callback(connnection_callback_);
     conn->set_write_complete_callback(write_complete_callback_);
-    conn->set_write_complete_callback(message_callback_);
+    conn->set_message_callback(message_callback_);
     conn->set_close_callback(
         std::bind(&tcp_server::remove_connection, this, _1));
 
