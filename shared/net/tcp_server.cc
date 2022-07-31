@@ -10,13 +10,13 @@ tcp_server::tcp_server(event_loop* loop,
                     const faddress& listen_addr, 
                     std::string name_args, 
                     Option opt/* = kNoReusePort*/)
-    :loop_(loop),
-    acceptor_(new acceptor(loop, listen_addr, opt == kReusePort)),
-    name_(name_args),
-    next_conne_id_(1)
+     :loop_(loop),
+     acceptor_(new acceptor(loop, listen_addr, opt == kReusePort)),
+     name_(name_args),
+     next_conne_id_(1)
 {
-    acceptor_->set_new_connnect_callback(
-        std::bind(&tcp_server::new_connetction, this, _1, _2));
+     acceptor_->set_new_connnect_callback(
+         std::bind(&tcp_server::new_connetction, this, _1, _2));
 }
 
 tcp_server::~tcp_server()

@@ -9,7 +9,7 @@
 #include "event_loop.h"
 
 // 接收器
-class acceptor:noncopyable
+class acceptor//:noncopyable
 {
 public:
     typedef std::function<void(int sockfd, const faddress&)> new_connction_func;

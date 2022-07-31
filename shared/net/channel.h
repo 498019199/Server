@@ -2,7 +2,7 @@
 #define __NET_CHANNEL__H__
 #include "socket.h"
 
-class channel :public noncopyable
+class channel// :public noncopyable
 {
     static const int kNoneEvent;
     static const int kReadEvent;
@@ -33,8 +33,13 @@ public:
     bool is_writing() const { return events_ & kWriteEvent; }
     bool is_reading() const { return events_ & kReadEvent; }
 
+    // for debug
+    std::string revents_to_string() const;
+    std::string events_to_string() const;
+
     void remove();
 private:
+    static std::string events_to_string(int fd, int ev);
 
     void update();
 private:

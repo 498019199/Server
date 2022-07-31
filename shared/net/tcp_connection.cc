@@ -1,7 +1,11 @@
 #include "tcp_connection.h"
 #include "channel.h"
+#include "base/logger.h"
 
 #include<memory>
+#include <string.h>
+
+#include <error.h>
 
 tcp_connection::tcp_connection(event_loop* loop,
                     const std::string name,
@@ -46,7 +50,7 @@ void tcp_connection::handle_read(int ts)
     else
     {
         errno = save_error;
-        //LOG_SYSERR << "TcpConnection::handleRead";
+        LOG_SYSERR << "TcpConnection::handleRead";
         handle_error();
     }
 }
@@ -60,6 +64,6 @@ void tcp_connection::handle_close()
 void tcp_connection::handle_error()
 {
     int err = sockets::get_socket_error(chan_->fd());
-    // LOG_ERROR << "TcpConnection::handleError [" << name_
-    //         << "] - SO_ERROR = " << err << " " << strerror_tl(err);
+    LOG_ERROR << "TcpConnection::handleError [" << name_
+             << "] - SO_ERROR = " << err << " " << strerror(err);
 }

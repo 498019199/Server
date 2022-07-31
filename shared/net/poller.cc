@@ -1,5 +1,6 @@
 #include "poller.h"
 #include "channel.h"
+#include "base/logger.h"
 
 #include <assert.h>
 #include <cstring>
@@ -25,7 +26,7 @@ poller::poller(event_loop* loop)
 {
     if (epoll_fd_ < 0)
     {
-        //LOG_SYSFATAL << "EPollPoller::EPollPoller";
+        LOG_SYSFATAL << "EPollPoller::EPollPoller";
     }
 }
 
@@ -116,7 +117,7 @@ int poller::poll(int timeout, std::vector<channel*>* active_chans)
     }
     else if (event_num == 0)
     {
-        //LOG_TRACE << "nothing happened";
+        LOG_TRACE << "nothing happened";
     }
     else
     {
@@ -124,7 +125,7 @@ int poller::poll(int timeout, std::vector<channel*>* active_chans)
         if (saved_errno != EINTR)
         {
             errno = saved_errno;
-            //LOG_SYSERR << "EPollPoller::poll()";
+            LOG_SYSERR << "EPollPoller::poll()";
         }
     }
 
@@ -138,17 +139,17 @@ void poller::update(int operation, channel* chan)
     event.events = chan->events();
     event.data.ptr = chan;
     int fd = chan->fd();
-    //LOG_TRACE << "epoll_ctl op = " << operationToString(operation)
-        //<< " fd = " << fd << " event = { " << chan->eventsToString() << " }";
+    LOG_TRACE << "epoll_ctl op = " << operation_to_string(operation)
+        << " fd = " << fd << " event = { " << chan->events_to_string() << " }";
     if (::epoll_ctl(epoll_fd_, operation, fd, &event) < 0)
     {
         if (operation == EPOLL_CTL_DEL)
         {
-            //LOG_SYSERR << "epoll_ctl op =" << operationToString(operation) << " fd =" << fd;
+            LOG_SYSERR << "epoll_ctl op =" << operation_to_string(operation) << " fd =" << fd;
         }
         else
         {
-            //LOG_SYSFATAL << "epoll_ctl op =" << operationToString(operation) << " fd =" << fd;
+            LOG_SYSFATAL << "epoll_ctl op =" << operation_to_string(operation) << " fd =" << fd;
         }
     }
 }

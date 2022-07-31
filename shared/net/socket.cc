@@ -1,5 +1,6 @@
 #include "socket.h"
 #include "base/type.h"
+#include "base/logger.h"
 
 #include <string.h>  // memset
 
@@ -18,7 +19,7 @@ int create_nonblocking_die(sa_family_t family)
     int sockfd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
     if (sockfd < 0)
     {
-        //LOG_SYSFATAL << "sockets::createNonblockingOrDie";
+        LOG_SYSFATAL << "sockets::createNonblockingOrDie";
     }
     return sockfd;
 }
@@ -33,7 +34,7 @@ void bind(int sockfd, const struct sockaddr* addr)
     int ret = ::bind(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
     if (ret < 0)
     {
-        //LOG_SYSFATAL << "sockets::bindOrDie";
+        LOG_SYSFATAL << "sockets::bindOrDie";
     }
 }
 
@@ -42,7 +43,7 @@ void listen(int sockfd)
     int ret = ::listen(sockfd, SOMAXCONN);
     if (ret < 0)
     {
-        //LOG_SYSFATAL << "sockets::listenOrDie";
+        LOG_SYSFATAL << "sockets::listenOrDie";
     }
 }
 
