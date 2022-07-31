@@ -2,7 +2,7 @@
 #define __NET_CHANNEL__H__
 #include "socket.h"
 
-class channel// :public noncopyable
+class channel : noncopyable
 {
     static const int kNoneEvent;
     static const int kReadEvent;

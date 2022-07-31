@@ -30,7 +30,7 @@ private:
     std::string name_;
     std::string ip;
     int port;
-    acceptor* acceptor_;
+    std::unique_ptr<acceptor> acceptor_;
     int next_conne_id_;
 
     event_loop* loop_;

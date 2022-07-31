@@ -24,7 +24,8 @@ tcp_server::~tcp_server()
 
 void tcp_server::start()
 {
-    
+    loop_->run_int_loop(
+        std::bind(&acceptor::set_listening, acceptor_.get()));
 }
 
 void tcp_server::new_connetction(int sockfd, const faddress& addr)

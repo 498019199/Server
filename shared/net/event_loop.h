@@ -1,7 +1,7 @@
 #ifndef __NET_LOOP_EVENET__H__
 #define __NET_LOOP_EVENET__H__
 
-
+#include <functional>
 #include <memory>
 #include <vector>
 class channel;
@@ -10,13 +10,16 @@ class poller;
 class event_loop
 {
     typedef std::vector<channel*> channel_list;
+    typedef std::function<void()> functor;
 public:
     event_loop();
     ~event_loop();
     
     void update_channel(channel* chan);
-    
     void remove_channel(channel* chan);
+
+    void run_int_loop(functor func);
+    void queue_in_loop(functor func);
 
     void loop();
 

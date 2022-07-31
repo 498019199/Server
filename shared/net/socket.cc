@@ -16,6 +16,7 @@ namespace sockets
 
 int create_nonblocking_die(sa_family_t family)
 {
+    //SOCK_STREAM提供面向连接的稳定数据传输
     int sockfd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
     if (sockfd < 0)
     {

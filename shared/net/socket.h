@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 #include <functional>
+#include <vector>
 
 class event_loop;
 class channel;

@@ -1,6 +1,7 @@
 #include "event_loop.h"
 #include "channel.h"
 #include "poller.h"
+#include "base/logger.h"
 
 const int kPollTimeMs = 10000;
 
@@ -23,6 +24,16 @@ void event_loop::remove_channel(channel* chan)
     poller_->remove_channel(chan);
 }
 
+void event_loop::run_int_loop(functor func)
+{
+    func();
+}
+
+void event_loop::queue_in_loop(functor func)
+{
+    
+}
+
 void event_loop::loop()
 {
     looping_ = true;
@@ -30,6 +41,8 @@ void event_loop::loop()
 
     while (!quit_)
     {
+        LOG_TRACE << "loop !" << std::endl;
+
         active_chans_.clear();
         int poll_ret_time = poller_->poll(kPollTimeMs, &active_chans_);
 
