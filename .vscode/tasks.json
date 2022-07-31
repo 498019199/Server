@@ -28,7 +28,13 @@
         {
             "label": "cmake_build",
             "type" : "shell",
-            "command": "make",
+            "command": "cmake",
+            "args": [
+                "--build", "${workspaceFolder}/build",
+                "--config", "Debug",
+                "--target", "all",
+                "-j","10"
+            ],
             "group": {
                 "kind": "build",
                 "isDefault": true

@@ -23,7 +23,8 @@
                 }
             ],
             "miDebuggerPath": "/usr/bin/gdb",
-            //"preLaunchTask": "cmake_build" // 调试前执行的任务，一般为编译程序。与tasks.json的label相对应
+            "preLaunchTask": "cmake_build" // 调试前执行的任务，一般为编译程序。与tasks.json的label相对应
         }
     ]
 }
+
