@@ -87,6 +87,18 @@ std::stringstream logtmp::stream()
 }
 
 
+async_logger::async_logger(const char* file_name, const char* file_path, int max_size){}
+
+async_logger::~async_logger(){}
+
+void async_logger::push(std::vector<std::string>& buf){}
+
+void async_logger::flush(){}
+
+void* async_logger::excute(void*){}
+
+
+
 
 logger::logger()
 {}

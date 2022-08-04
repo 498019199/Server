@@ -2,6 +2,8 @@
 #define __BASE_LOGGER__H__
 #include <iostream>
 #include <sstream>
+#include <vector>
+#include <queue>
 
 #include "base/mutex.h"
 
@@ -61,6 +63,29 @@ class async_logger
 {
 public:
     std::shared_ptr<async_logger> ptr;
+
+    async_logger(const char* file_name, const char* file_path, int max_size);
+
+    ~async_logger();
+
+    void push(std::vector<std::string>& buf);
+
+    void flush();
+
+    static void* excute(void*);
+
+public:
+    std::queue<std::vector<std::string>> m_tasks;
+    pthread_t m_thread;
+private:
+    const char* file_name_;
+    const char* file_path_;
+    int max_size_;
+    std::string data_;
+
+    mutex mutex_:
+    bool is_stop_ = false;
+
 };
 
 class logger

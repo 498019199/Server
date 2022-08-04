@@ -24,6 +24,7 @@ set(HEADERS
   )
 
 set(NET_SOURCES
+    ${PROJECT_SOURCE_DIR}/shared/base/logger.cc
     ${PROJECT_SOURCE_DIR}/shared/net/acceptor.cc
     ${PROJECT_SOURCE_DIR}/shared/net/address.cc
     ${PROJECT_SOURCE_DIR}/shared/net/channel.cc
