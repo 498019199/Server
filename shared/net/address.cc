@@ -21,7 +21,7 @@ faddress::faddress(const char* ip, uint16_t port, bool ipv6 /*= false*/)
         addr6_.sin6_port = htobe16(port);
         if (::inet_pton(AF_INET6, ip, &addr6_.sin6_addr) <= 0)
         {
-            LOG_SYSERR << "sockets::fromIpPort";
+            LOG_ERROR << "sockets::fromIpPort";
         }
     }
     else
@@ -31,7 +31,7 @@ faddress::faddress(const char* ip, uint16_t port, bool ipv6 /*= false*/)
         addr_.sin_port = htobe16(port);
         if (::inet_pton(AF_INET, ip, &addr_.sin_addr) <= 0)
         {
-            LOG_SYSERR << "sockets::fromIpPort";
+            LOG_ERROR << "sockets::fromIpPort";
         }
     }
 }

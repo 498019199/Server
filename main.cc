@@ -4,8 +4,11 @@
 #include "shared/net/event_loop.h"
 #include "shared/net/echo_server.h"
 
+logger::ptr g_logger; 
 int main()
 {
+    g_logger = make_shared<logger>();
+    g_logger->init();
     
     LOG_TRACE << "begin init server" << std::endl;
     event_loop loop;

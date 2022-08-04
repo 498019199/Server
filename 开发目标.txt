@@ -8,3 +8,7 @@ acceptor->connection->poller->loop_event
 基于tpc复用I/O的echo服务器
 2022年7月31日
 vscode 调试有问题，用gdb查看正常的
+
+2022年8月4日
+移植tinyrpc log模块
+https://github.com/Gooddbird/tinyrpc

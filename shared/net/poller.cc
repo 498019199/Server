@@ -26,7 +26,7 @@ poller::poller(event_loop* loop)
 {
     if (epoll_fd_ < 0)
     {
-        LOG_SYSFATAL << "EPollPoller::EPollPoller";
+        LOG_FATAL << "EPollPoller::EPollPoller";
     }
 }
 
@@ -125,7 +125,7 @@ int poller::poll(int timeout, std::vector<channel*>* active_chans)
         if (saved_errno != EINTR)
         {
             errno = saved_errno;
-            LOG_SYSERR << "EPollPoller::poll()";
+            LOG_ERROR << "EPollPoller::poll()";
         }
     }
 
@@ -145,11 +145,11 @@ void poller::update(int operation, channel* chan)
     {
         if (operation == EPOLL_CTL_DEL)
         {
-            LOG_SYSERR << "epoll_ctl op =" << operation_to_string(operation) << " fd =" << fd;
+            LOG_ERROR << "epoll_ctl op =" << operation_to_string(operation) << " fd =" << fd;
         }
         else
         {
-            LOG_SYSFATAL << "epoll_ctl op =" << operation_to_string(operation) << " fd =" << fd;
+            LOG_FATAL << "epoll_ctl op =" << operation_to_string(operation) << " fd =" << fd;
         }
     }
 }

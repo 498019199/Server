@@ -50,7 +50,7 @@ void tcp_connection::handle_read(int ts)
     else
     {
         errno = save_error;
-        LOG_SYSERR << "TcpConnection::handleRead";
+        LOG_ERROR << "TcpConnection::handleRead";
         handle_error();
     }
 }

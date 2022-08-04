@@ -20,7 +20,7 @@ int create_nonblocking_die(sa_family_t family)
     int sockfd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
     if (sockfd < 0)
     {
-        LOG_SYSFATAL << "sockets::createNonblockingOrDie";
+        LOG_FATAL << "sockets::createNonblockingOrDie";
     }
     return sockfd;
 }
@@ -35,7 +35,7 @@ void bind(int sockfd, const struct sockaddr* addr)
     int ret = ::bind(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
     if (ret < 0)
     {
-        LOG_SYSFATAL << "sockets::bindOrDie";
+        LOG_FATAL << "sockets::bindOrDie";
     }
 }
 
@@ -44,7 +44,7 @@ void listen(int sockfd)
     int ret = ::listen(sockfd, SOMAXCONN);
     if (ret < 0)
     {
-        LOG_SYSFATAL << "sockets::listenOrDie";
+        LOG_FATAL << "sockets::listenOrDie";
     }
 }
 
@@ -74,7 +74,7 @@ void close(int sockfd)
 {
     if (::close(sockfd) < 0)
     {
-        //LOG_SYSERR << "sockets::close";
+        LOG_ERROR << "sockets::close";
     }
 }
 
@@ -102,7 +102,7 @@ void set_reuse_port(int sockfd, bool on)
                          &optval, static_cast<socklen_t>(sizeof optval));
     if (ret < 0 && on)
     {
-        //LOG_SYSERR << "SO_REUSEPORT failed.";
+        LOG_ERROR << "SO_REUSEPORT failed.";
     }
 }
 
@@ -121,7 +121,7 @@ struct sockaddr_in6 get_addr(int sockfd)
     socklen_t addrlen = static_cast<socklen_t>(sizeof addr);
     if (::getsockname(sockfd, sockaddr_cast(&addr), &addrlen) < 0)
     {
-        //LOG_SYSERR << "sockets::getLocalAddr";
+        LOG_ERROR << "sockets::getLocalAddr";
     }
 
     return addr;

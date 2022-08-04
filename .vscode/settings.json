@@ -67,6 +67,7 @@
         "typeinfo": "cpp",
         "cstring": "cpp",
         "map": "cpp",
-        "cerrno": "cpp"
+        "cerrno": "cpp",
+        "xiosbase": "cpp"
     }
 }
