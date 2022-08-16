@@ -5,15 +5,15 @@
 class condition_variable
 {
 public:
-    explicit condition_variable();
+    explicit condition_variable(mutex_lock& lock);
 
     ~condition_variable();
 
     void wait();
 
     void broadcast();
-    void signal();
 
+    void signal();
 private:
 #if defined(PLATFORM_LINUX)
     pthread_cond_t condition_;
