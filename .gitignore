@@ -10,4 +10,5 @@
 .idea/other.xml
 .idea/Server.iml
 .idea/vcs.xml
-.idea/encodings.xml
+.gitignore
+CMakeCache.txt
