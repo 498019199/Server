@@ -11,10 +11,10 @@
 enum LogLevel
 {
     LogLevel_Dubug = 1,
-	LogLevel_Trace,
-	LogLevel_Warn,
-	LogLevel_Error,
-	LogLevel_Fatal,
+    LogLevel_Trace,
+    LogLevel_Warn,
+    LogLevel_Error,
+    LogLevel_Fatal,
 };
 
 class log_event
@@ -23,7 +23,7 @@ public:
     typedef std::shared_ptr<log_event> ptr;
 
     log_event(LogLevel level, const char* filename, int line, const char* func_name)
-        :log_level_(level), file_name_(filename), line_(line), func_name_(func_name)
+            :log_level_(level), file_name_(filename), line_(line), func_name_(func_name)
     {
     }
 
@@ -48,7 +48,7 @@ class log_tmp
 {
 public:
     explicit log_tmp(log_event::ptr event)
-        :event_(event)
+            :event_(event)
     {}
 
     ~log_tmp()
@@ -79,6 +79,7 @@ public:
 
     static void* excute(void*);
 
+    void stop();
 public:
     std::queue<std::vector<std::string>> m_tasks;
     pthread_t thread_;
@@ -88,6 +89,7 @@ private:
     const char* file_path_;
     int max_size_;
 
+    int no_ = 0;
     bool need_reopen_ = false;
     std::string data_;
     FILE* file_handle_ = nullptr;
@@ -107,18 +109,19 @@ public:
 
     void log();
 
-    void push_log(std::string log_buf);
+    void push_log(const std::string& msg);
 
     void loop();
 
     void flush();
 
+    async_logger::ptr get_async_logger() {return async_log_;}
 public:
     std::vector<std::string> buffs_;
 private:
-    bool is_init = false;
+    bool is_init_ = false;
     mutex mutex_;
-    async_logger::ptr m_async_log_;
+    async_logger::ptr async_log_;
 };
 
 
