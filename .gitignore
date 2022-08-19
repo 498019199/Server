@@ -1,14 +1,7 @@
 /.vscode
 /cmake-build-debug
 /cmake-build-debug-linux-centos8
-.idea/.gitignore
-.idea/.name
-.idea/customTargets.xml
-.idea/deployment.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/other.xml
-.idea/Server.iml
-.idea/vcs.xml
-.gitignore
+/.idea
+/CMakeFiles
 CMakeCache.txt
+
