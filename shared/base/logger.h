@@ -124,17 +124,19 @@ private:
     async_logger::ptr async_log_;
 };
 
+#define LOG_STREAM(log_level) \
+    log_tmp(log_event::ptr(new log_event(log_level, __FILE__, __LINE__, __func__))).stream()
 
 #define LOG_DEBUG \
-    log_tmp(std::make_shared<log_event>(LogLevel::LogLevel_Dubug, __FILE__, __LINE__, __func__)).stream()
+    LOG_STREAM(LogLevel::LogLevel_Dubug)
 #define LOG_TRACE \
-    log_tmp(log_event::ptr(new log_event(LogLevel::LogLevel_Trace, __FILE__, __LINE__, __func__))).stream()
+    LOG_STREAM(LogLevel::LogLevel_Trace)
 #define LOG_WARN \
-    log_tmp(log_event::ptr(new log_event(LogLevel::LogLevel_Warn, __FILE__, __LINE__, __func__))).stream()
+    LOG_STREAM(LogLevel::LogLevel_Warn)
 #define LOG_ERROR \
-    log_tmp(log_event::ptr(new log_event(LogLevel::LogLevel_Error, __FILE__, __LINE__, __func__))).stream()
+    LOG_STREAM(LogLevel::LogLevel_Error)
 #define LOG_FATAL \
-    log_tmp(log_event::ptr(new log_event(LogLevel::LogLevel_Fatal, __FILE__, __LINE__, __func__))).stream()
+    LOG_STREAM(LogLevel::LogLevel_Error)
 
 
 #define LOG_SYSERR std::cout
