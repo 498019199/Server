@@ -26,11 +26,12 @@ include_directories(
 set(HEADERS
     ${PROJECT_SOURCE_DIR}/shared/base/*.h
     ${PROJECT_SOURCE_DIR}/shared/net/*.h
+    ${PROJECT_SOURCE_DIR}/shared/other_lib/*.h
   )
 
 set(NET_SOURCES
         ${PROJECT_SOURCE_DIR}/shared/base/logger.cc
-       ${PROJECT_SOURCE_DIR}/shared/base/condition_variable.cc)
+        ${PROJECT_SOURCE_DIR}/shared/base/condition_variable.cc
 #        ${PROJECT_SOURCE_DIR}/shared/net/acceptor.cc
 #        ${PROJECT_SOURCE_DIR}/shared/net/address.cc
 #        ${PROJECT_SOURCE_DIR}/shared/net/channel.cc
