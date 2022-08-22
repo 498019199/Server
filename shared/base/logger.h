@@ -6,7 +6,8 @@
 #include <queue>
 #include <memory>
 
-#include "base/mutex.h"
+#include "base/lock.h"
+#include "base/condition_variable.h"
 
 enum LogLevel
 {
@@ -83,7 +84,6 @@ public:
 public:
     std::queue<std::vector<std::string>> m_tasks;
     pthread_t thread_;
-    pthread_cond_t condition_;
 private:
     const char* file_name_;
     const char* file_path_;
@@ -94,6 +94,9 @@ private:
     std::string data_;
     FILE* file_handle_ = nullptr;
     bool is_stop_ = false;
+
+    mutex_lock mutex_;
+    condition_variable condition_;
 };
 
 class logger
@@ -120,7 +123,7 @@ public:
     std::vector<std::string> buffs_;
 private:
     bool is_init_ = false;
-    mutex mutex_;
+    mutex_lock mutex_;
     async_logger::ptr async_log_;
 };
 

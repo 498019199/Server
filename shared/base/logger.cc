@@ -92,7 +92,10 @@ void log_event::log()
 
 
 async_logger::async_logger(const char* file_name, const char* file_path, int max_size)
-        :file_name_(file_name), file_path_(file_path),max_size_(max_size)
+        :file_name_(file_name),
+        file_path_(file_path),
+        max_size_(max_size),
+        condition_(mutex_)
 {
     pthread_create(&thread_, nullptr, &async_logger::excute, this);
 }
@@ -103,9 +106,10 @@ async_logger::~async_logger()
 
 void async_logger::push(std::vector<std::string>& buf)
 {
-    mutex lock;
+    mutex_.lock();
     m_tasks.push(buf);
-    pthread_cond_signal(&condition_);
+    mutex_.unlock();
+    condition_.signal();
 }
 
 void async_logger::flush()
@@ -119,21 +123,20 @@ void async_logger::flush()
 void* async_logger::excute(void* arg)
 {
     async_logger* ptr = reinterpret_cast<async_logger*>(arg);
-    pthread_cond_init(&ptr->condition_, nullptr);
 
     while (1)
     {
-        mutex lock;
+        ptr->mutex_.lock();
         while (ptr->m_tasks.empty())
         {
-            pthread_cond_wait(&(ptr->condition_), lock.get_mutex());
+            ptr->condition_.wait();
         }
 
         std::vector<std::string> tmp;
         tmp.swap(ptr->m_tasks.front());
         ptr->m_tasks.pop();
         bool is_stop = ptr->is_stop_;
-        lock.unlock();
+        ptr->mutex_.unlock();
 
 
         timeval now;
@@ -225,18 +228,13 @@ logger::logger()
 logger::~logger()
 {
     flush();
-    pthread_join(async_log_->thread_, NULL);
+    pthread_join(async_log_->thread_, nullptr);
 }
 
 void logger::init(const char* file_name, const char* file_path, int max_size, int sync_inteval)
 {
     if (!is_init_)
     {
-        for (int i = 0 ; i < 1000000; ++i)
-        {
-            buffs_.push_back("");
-        }
-
         // TimerEvent::ptr event = std::make_shared<TimerEvent>(sync_inteval, true, std::bind(&logger::loop, this));
         //Reactor::GetReactor()->getTimer()->addTimerEvent(event);
         async_log_ = std::make_shared<async_logger>(file_name, file_path, max_size);
@@ -261,8 +259,7 @@ void logger::push_log(const std::string& msg)
 {
     if (g_rpc_log_index == 0)
     {
-        mutex lock;
-        lock.lock();
+        mutex_.lock();
         int64_t i  = g_rpc_log_index++;
         // printf("i=%ld\n", i);
         buffs_[i] = std::move(msg);
@@ -283,19 +280,9 @@ void logger::loop()
         tmp.push_back("");
     }
 
-    mutex lock;
-    lock.lock();
-    int64_t old_value1 = g_rpc_log_index.exchange(0);
-    if (old_value1 > 0)
-    {
-        while (buffs_[old_value1 - 1] == "")
-        {
-            // wait unitl all pre log has already write to m_buffer and m_app_buffer
-        }
-    }
-
+    mutex_.lock();
     tmp.swap(buffs_);
-    lock.unlock();
+    mutex_.unlock();
 
     auto it = std::find(tmp.begin(), tmp.end(), "");
     tmp.erase(it, tmp.end());
