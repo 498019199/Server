@@ -31,6 +31,7 @@ set(HEADERS
 set(NET_SOURCES
         ${PROJECT_SOURCE_DIR}/shared/base/logger.cc
         ${PROJECT_SOURCE_DIR}/shared/base/condition_variable.cc
+
         ${PROJECT_SOURCE_DIR}/shared/net/acceptor.cc
         ${PROJECT_SOURCE_DIR}/shared/net/address.cc
         ${PROJECT_SOURCE_DIR}/shared/net/channel.cc
@@ -39,8 +40,9 @@ set(NET_SOURCES
         ${PROJECT_SOURCE_DIR}/shared/net/echo_server.cc
         ${PROJECT_SOURCE_DIR}/shared/net/poller.cc
         ${PROJECT_SOURCE_DIR}/shared/net/socket.cc
-        ${PROJECT_SOURCE_DIR}/shared/net/tcp_connection.cc
-        ${PROJECT_SOURCE_DIR}/shared/net/tcp_server.cc)
+        ${PROJECT_SOURCE_DIR}/shared/net/tcp/tcp_connection.cc
+        ${PROJECT_SOURCE_DIR}/shared/net/tcp/tcp_server.cc
+        ${PROJECT_SOURCE_DIR}/shared/net/timer.cc)
 add_library(SHARED_LIB ${NET_SOURCES})
 
 add_executable(${PROJECT_NAME}

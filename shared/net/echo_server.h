@@ -1,7 +1,7 @@
 #ifndef __NET_ECHO_SERVER__H__
 #define __NET_ECHO_SERVER__H__
 
-#include "tcp_server.h"
+#include "net/tcp/tcp_server.h"
 
 class event_loop;
 class faddress;

@@ -1,7 +1,7 @@
 #ifndef __NET_TCP_CONNECTION__H__
 #define __NET_TCP_CONNECTION__H__
-#include "socket.h"
-#include "address.h"
+#include "net/socket.h"
+#include "net/address.h"
 
 class tcp_connection:noncopyable,
                     public std::enable_shared_from_this<tcp_connection>

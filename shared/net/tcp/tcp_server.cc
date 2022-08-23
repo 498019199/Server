@@ -1,8 +1,8 @@
 #include "tcp_server.h"
-#include "socket.h"
-#include "acceptor.h"
-#include "tcp_connection.h"
-#include "address.h"
+#include "net/socket.h"
+#include "net/acceptor.h"
+#include "net/tcp/tcp_connection.h"
+#include "net/address.h"
 #include <functional>
 
 

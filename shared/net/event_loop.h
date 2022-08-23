@@ -4,6 +4,8 @@
 #include <functional>
 #include <memory>
 #include <vector>
+#include "timer.h"
+
 class channel;
 class poller;
 
@@ -22,7 +24,6 @@ public:
     void queue_in_loop(functor func);
 
     void loop();
-
     void quit();
 private:
     bool looping_;
