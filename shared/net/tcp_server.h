@@ -16,7 +16,7 @@ public:
 
     tcp_server(event_loop* loop, 
             const faddress& listen_addr, 
-            std::string name_args, 
+            const char* name_args,
             Option opt = kNoReusePort);
 
     ~tcp_server();

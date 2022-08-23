@@ -21,8 +21,8 @@ static_assert(EPOLLHUP == POLLHUP,      "epoll uses same flag values as poll");
 
 poller::poller(event_loop* loop)
     :loop_(loop),
-    epoll_fd_(::epoll_create1(EPOLL_CLOEXEC)),
-    events_(kInitEventListSize)
+    events_(kInitEventListSize),
+    epoll_fd_(::epoll_create1(EPOLL_CLOEXEC))
 {
     if (epoll_fd_ < 0)
     {

@@ -6,16 +6,15 @@
 #include <signal.h>
 #include <time.h>
 #include <sys/time.h>
+#include <pthread.h>
 
-static std::atomic_int64_t g_rpc_log_index = 0;
 extern logger::ptr g_logger;
-
 void core_dump_handler(int signal_no)
 {
     LOG_ERROR << "progress received invalid signal, will exit";
     printf("progress received invalid signal, will exit\n");
     g_logger->flush();
-    pthread_join(g_logger->get_async_logger()->thread_, NULL);
+    pthread_join(g_logger->get_async_logger()->thread_, nullptr);
 
     signal(signal_no, SIG_DFL);
     raise(signal_no);
@@ -94,8 +93,7 @@ void log_event::log()
 async_logger::async_logger(const char* file_name, const char* file_path, int max_size)
         :file_name_(file_name),
         file_path_(file_path),
-        max_size_(max_size),
-        condition_(mutex_)
+        max_size_(max_size)
 {
     pthread_create(&thread_, nullptr, &async_logger::excute, this);
 }
@@ -109,7 +107,7 @@ void async_logger::push(std::vector<std::string>& buf)
     mutex_.lock();
     m_tasks.push(buf);
     mutex_.unlock();
-    condition_.signal();
+    pthread_cond_signal(&condition_);
 }
 
 void async_logger::flush()
@@ -123,13 +121,13 @@ void async_logger::flush()
 void* async_logger::excute(void* arg)
 {
     async_logger* ptr = reinterpret_cast<async_logger*>(arg);
-
+    pthread_cond_init(&ptr->condition_, NULL);
     while (1)
     {
         ptr->mutex_.lock();
         while (ptr->m_tasks.empty())
         {
-            ptr->condition_.wait();
+            pthread_cond_wait(&ptr->condition_, ptr->mutex_.get_mutex());
         }
 
         std::vector<std::string> tmp;
@@ -257,35 +255,18 @@ void logger::log()
 
 void logger::push_log(const std::string& msg)
 {
-    if (g_rpc_log_index == 0)
-    {
-        mutex_.lock();
-        int64_t i  = g_rpc_log_index++;
-        // printf("i=%ld\n", i);
-        buffs_[i] = std::move(msg);
-    }
-    else
-    {
-        int64_t i  = g_rpc_log_index++;
-        // printf("i=%ld\n", i);
-        buffs_[i] = std::move(msg);
-    }
+    mutex_.lock();
+    buffs_.push_back(msg);
+    mutex_.unlock();
 }
 
 void logger::loop()
 {
     std::vector<std::string> tmp;
-    for (int i = 0 ; i < 1000000; ++i)
-    {
-        tmp.push_back("");
-    }
-
     mutex_.lock();
     tmp.swap(buffs_);
     mutex_.unlock();
 
-    auto it = std::find(tmp.begin(), tmp.end(), "");
-    tmp.erase(it, tmp.end());
     async_log_->push(tmp);
 }
 

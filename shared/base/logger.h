@@ -1,13 +1,11 @@
 #ifndef __BASE_LOGGER__H__
 #define __BASE_LOGGER__H__
-#include <iostream>
 #include <sstream>
 #include <vector>
 #include <queue>
 #include <memory>
 
 #include "base/lock.h"
-#include "base/condition_variable.h"
 
 enum LogLevel
 {
@@ -96,7 +94,7 @@ private:
     bool is_stop_ = false;
 
     mutex_lock mutex_;
-    condition_variable condition_;
+    pthread_cond_t condition_;
 };
 
 class logger
@@ -141,7 +139,30 @@ private:
 #define LOG_FATAL \
     LOG_STREAM(LogLevel::LogLevel_Error)
 
+// Build the error message string.  This is separate from the "Impl"
+// function template because it is not performance critical and so can
+// be out of line, while the "Impl" code should be inline.  Caller
+// takes ownership of the returned string.
+template<class t1, class t2>
+std::string* MakeCheckOpString(const t1& v1, const t2& v2, const char* names) {
+    std::ostringstream ss;
+    ss << names << " (" << v1 << " vs " << v2 << "). ";
+    std::string* msg = new std::string(ss.str());
+    return msg;
+}
 
-#define LOG_SYSERR std::cout
-#define LOG_SYSFATAL std::cout
+#define BAIDU_CHECK_OP(name, op, val1, val2)                            \
+    if (std::string* _result =                                          \
+               MakeCheckOpString((val1), (val2),                        \
+                                #val1 " " #op " " #val2))               \
+                                LOG_DEBUG << _result;
+
+
+#define CHECK_EQ(val1, val2) BAIDU_CHECK_OP(EQ, ==, val1, val2)
+#define CHECK_NE(val1, val2) BAIDU_CHECK_OP(NE, !=, val1, val2)
+#define CHECK_LE(val1, val2) BAIDU_CHECK_OP(LE, <=, val1, val2)
+#define CHECK_LT(val1, val2) BAIDU_CHECK_OP(LT, < , val1, val2)
+#define CHECK_GE(val1, val2) BAIDU_CHECK_OP(GE, >=, val1, val2)
+#define CHECK_GT(val1, val2) BAIDU_CHECK_OP(GT, > , val1, val2)
+
 #endif//__BASE_LOGGER__H__

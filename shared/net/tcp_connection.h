@@ -16,7 +16,7 @@ private:
     };
 public:
     tcp_connection(event_loop* loop,
-                    const std::string name,
+                    const char* name,
                     int sockfd,
                     const faddress& local_addr,
                     const faddress& peer_addr);

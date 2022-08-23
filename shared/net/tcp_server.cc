@@ -7,13 +7,13 @@
 
 
 tcp_server::tcp_server(event_loop* loop, 
-                    const faddress& listen_addr, 
-                    std::string name_args, 
+                    const faddress& listen_addr,
+                    const char* name_args,
                     Option opt/* = kNoReusePort*/)
-     :loop_(loop),
+     :name_(name_args),
      acceptor_(new acceptor(loop, listen_addr, opt == kReusePort)),
-     name_(name_args),
-     next_conne_id_(1)
+     next_conne_id_(1),
+     loop_(loop)
 {
      acceptor_->set_new_connnect_callback(
          std::bind(&tcp_server::new_connetction, this, _1, _2));
@@ -40,7 +40,7 @@ void tcp_server::new_connetction(int sockfd, const faddress& addr)
     //     << "] from " << addr.ip() << ":" << addr.port();
     faddress local_addr(sockets::get_addr(sockfd));
     tcp_connection_ptr conn(new tcp_connection(loop_, 
-                                            conn_name,
+                                            conn_name.c_str(),
                                             sockfd,
                                             local_addr,
                                             addr));

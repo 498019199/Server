@@ -8,18 +8,18 @@
 #include <error.h>
 
 tcp_connection::tcp_connection(event_loop* loop,
-                    const std::string name,
+                    const char* name,
                     int sockfd,
                     const faddress& local_addr,
                     const faddress& peer_addr)
                     :loop_(loop),
                     name_(name),
-                    state_(kConnected),
                     reading_(true),
+                    state_(kConnected),
                     sock_fd_(sockfd),
-                    chan_(new channel(loop, sockfd)),
                     local_addr_(local_addr),
-                    peer_addr_(peer_addr)
+                    peer_addr_(peer_addr),
+                    chan_(new channel(loop, sockfd))
 {
     
 }
