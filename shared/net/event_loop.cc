@@ -7,7 +7,8 @@
 const int kPollTimeMs = 10000;
 
 event_loop::event_loop()
-    :poller_(new poller(this))
+    :poller_(new poller(this)),
+    timer_queue_(new timer_queue(this))
 {}
 
 event_loop::~event_loop()
@@ -23,16 +24,6 @@ void event_loop::update_channel(channel* chan)
 void event_loop::remove_channel(channel* chan)
 {
     poller_->remove_channel(chan);
-}
-
-void event_loop::run_int_loop(functor func)
-{
-    func();
-}
-
-void event_loop::queue_in_loop(functor func)
-{
-    
 }
 
 void event_loop::loop()
@@ -67,4 +58,14 @@ timer_queue* event_loop::get_timer()
         timer_queue_ = new timer_queue(this);
     }
     return timer_queue_;
+}
+
+void event_loop::run_int_loop(event_loop::functor func)
+{
+    func();
+}
+
+void event_loop::queue_in_loop(event_loop::functor func)
+{
+
 }

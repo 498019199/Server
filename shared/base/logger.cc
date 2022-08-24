@@ -230,14 +230,11 @@ logger::~logger()
     pthread_join(async_log_->thread_, nullptr);
 }
 
-void logger::init(event_loop* loop, const char* file_name, const char* file_path, int max_size, int sync_inteval)
+void logger::init(const char* file_name, const char* file_path, int max_size, int sync_inteval)
 {
     if (!is_init_)
     {
-        timer_event::ptr event = std::make_shared<timer_event>(sync_inteval, true, std::bind(&logger::loop, this));
-        loop->get_timer()->add_timer(event, true);
         async_log_ = std::make_shared<async_logger>(file_name, file_path, max_size);
-
         signal(SIGSEGV, core_dump_handler);
         signal(SIGABRT, core_dump_handler);
         signal(SIGTERM, core_dump_handler);
@@ -249,6 +246,12 @@ void logger::init(event_loop* loop, const char* file_name, const char* file_path
         signal(SIGPIPE, SIG_IGN);
         is_init_ = true;
     }
+}
+
+void logger::start(event_loop *loop, int sync_inteval)
+{
+    timer_event::ptr event = std::make_shared<timer_event>(sync_inteval, true, std::bind(&logger::loop, this));
+    loop->get_timer()->add_timer(event, true);
 }
 
 void logger::log()
@@ -277,3 +280,4 @@ void logger::flush()
     async_log_->stop();
     async_log_->flush();
 }
+

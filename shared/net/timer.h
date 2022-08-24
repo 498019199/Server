@@ -4,6 +4,8 @@
 #include <set>
 #include <map>
 #include "socket.h"
+#include "channel.h"
+
 struct timer_event
 {
     typedef std::shared_ptr<timer_event> ptr;
@@ -43,8 +45,9 @@ public:
 
     void on_timer();
 private:
-    event_loop* loop_;
     const int timer_fd_;
+    event_loop* loop_;
+    channel timer_chan_;
 
     std::multimap<int64_t, timer_event::ptr> pending_event_;
 };

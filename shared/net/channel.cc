@@ -1,6 +1,7 @@
 #include "channel.h"
 #include "event_loop.h"
 #include "base/logger.h"
+#include "poller.h"
 
 #include <sstream>
 
@@ -12,7 +13,10 @@ const int channel::kWriteEvent = POLLOUT;
 
 channel::channel(event_loop* loop, int fd)
     :loop_(loop),
-    fd_(fd)
+    fd_(fd),
+    events_(0),
+    revents_(0),
+    index_(kNew)
 {}
 
 channel::~channel()
@@ -61,14 +65,6 @@ std::string channel::events_to_string() const
     return events_to_string(fd_, events_);
 }
 
-void channel::remove()
-{   
-    if (loop_)
-    {
-        loop_->remove_channel(this);
-    }
-}
-
 std::string channel::events_to_string(int fd, int ev)
 {
     std::ostringstream oss;
@@ -93,8 +89,12 @@ std::string channel::events_to_string(int fd, int ev)
 
 void channel::update()
 {
-    if (loop_)
-    {
-        loop_->update_channel(this);
-    }
+    add_to_loop_ = true;
+    loop_->update_channel(this);
+}
+
+void channel::remove()
+{
+    add_to_loop_ = false;
+    loop_->remove_channel(this);
 }

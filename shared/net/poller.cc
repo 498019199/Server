@@ -38,8 +38,8 @@ poller::~poller()
 void poller::update_channel(channel* chan)
 {
     const int index = chan->index();
-    // LOG_TRACE << "fd = " << chan->fd()
-    // << " events = " << chan->events() << " index = " << index;
+//    LOG_TRACE << "fd = " << chan->fd()
+//    << " events = " << chan->events() << " index = " << index;
     if (index == kNew || index == kDeleted)
     {
         // a new one, add with EPOLL_CTL_ADD
@@ -100,7 +100,7 @@ void poller::remove_channel(channel* chan)
 
 int poller::poll(int timeout, std::vector<channel*>* active_chans)
 {
-    //LOG_TRACE << "fd total count " << channels_.size();
+    LOG_TRACE << "fd total count " << chans_.size();
     int event_num = ::epoll_wait(epoll_fd_,
                                 &*events_.begin(),
                                 static_cast<int>(events_.size()),
@@ -108,7 +108,7 @@ int poller::poll(int timeout, std::vector<channel*>* active_chans)
     int saved_errno = errno;
     if (event_num > 0)
     {
-        //LOG_TRACE << numEvents << " events happened";
+        LOG_TRACE << event_num << " events happened";
         fill_active_channels(event_num, active_chans);
         if (static_cast<size_t>(event_num) == events_.size())
         {
@@ -160,12 +160,11 @@ void poller::fill_active_channels(int num_event, std::vector<channel*>* active_c
     for (int i = 0; i < num_event; ++i)
     {
         channel* chan = static_cast<channel*>(events_[i].data.ptr);
-#ifndef NDEBUG
         int fd = chan->fd();
         auto it = chans_.find(fd);
         assert(it != chans_.end());
         assert(it->second == chan);
-#endif
+
         chan->set_revents(events_[i].events);
         active_chans->push_back(chan);
     }

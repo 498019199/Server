@@ -25,10 +25,12 @@ int64_t get_now_time()
 }
 
 timer_queue::timer_queue(event_loop *loop)
-    :loop_(loop),
-     timer_fd_(createTimerfd())
+    :timer_fd_(createTimerfd()),
+     loop_(loop),
+     timer_chan_(loop, timer_fd_)
 {
-
+    timer_chan_.set_read_callback(std::bind(&timer_queue::on_timer, this));
+    timer_chan_.enable_reeading();
 }
 
 timer_queue::~timer_queue()

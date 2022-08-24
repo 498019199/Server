@@ -23,11 +23,12 @@ namespace fs = std::experimental::filesystem;
 logger::ptr g_logger;
 int main()
 {
-    event_loop loop;
     auto path = fs::current_path();
     g_logger = std::make_shared<logger>();
-    g_logger->init(&loop, "111.log", path.c_str(), 1024, 1);
+    g_logger->init("111.log", path.c_str(), 1024, 1);
 
+    event_loop loop;
+    g_logger->start(&loop, 1);
     LOG_TRACE << "begin init server" << std::endl;
 
     faddress server_addr("127.0.0.1", 6379);
@@ -36,7 +37,7 @@ int main()
     LOG_TRACE << "begin start server" << std::endl;
     server.start();
     LOG_TRACE << "begin loop server" << std::endl;loop.loop();
-
+    loop.loop();
     return 0;
 }
 

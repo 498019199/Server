@@ -49,7 +49,9 @@ private:
     int        events_;
     int        revents_; // it's the received event types of epoll or poll
     int        index_; // used by Poller.
-    bool event_handling_;
+
+    bool event_handling_ = false;
+    bool add_to_loop_ = false;
 
     read_event_callback read_callback_;
     event_callback write_callback_;
