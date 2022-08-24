@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "base/lock.h"
+#include "net/event_loop.h"
 
 enum LogLevel
 {
@@ -106,7 +107,7 @@ public:
 
     ~logger();
 
-    void init(const char* file_name, const char* file_path, int max_size, int sync_inteval);
+    void init(event_loop* loop, const char* file_name, const char* file_path, int max_size, int sync_inteval);
 
     void log();
 

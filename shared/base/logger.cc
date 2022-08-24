@@ -1,4 +1,5 @@
 #include "logger.h"
+#include "net/timer.h"
 
 #include <algorithm>
 #include <atomic>
@@ -229,12 +230,12 @@ logger::~logger()
     pthread_join(async_log_->thread_, nullptr);
 }
 
-void logger::init(const char* file_name, const char* file_path, int max_size, int sync_inteval)
+void logger::init(event_loop* loop, const char* file_name, const char* file_path, int max_size, int sync_inteval)
 {
     if (!is_init_)
     {
-        // TimerEvent::ptr event = std::make_shared<TimerEvent>(sync_inteval, true, std::bind(&logger::loop, this));
-        //Reactor::GetReactor()->getTimer()->addTimerEvent(event);
+        timer_event::ptr event = std::make_shared<timer_event>(sync_inteval, true, std::bind(&logger::loop, this));
+        loop->get_timer()->add_timer(event, true);
         async_log_ = std::make_shared<async_logger>(file_name, file_path, max_size);
 
         signal(SIGSEGV, core_dump_handler);

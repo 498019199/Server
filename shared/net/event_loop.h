@@ -25,6 +25,8 @@ public:
 
     void loop();
     void quit();
+
+    timer_queue* get_timer();
 private:
     bool looping_;
     bool quit_;
@@ -32,6 +34,7 @@ private:
 
     std::unique_ptr<poller> poller_;
     channel_list active_chans_;
-    channel* current_chan_ptr_;
+    channel* current_chan_ptr_ = nullptr;
+    timer_queue* timer_queue_ = nullptr;
 };
 #endif//__NET_LOOP_EVENET__H__

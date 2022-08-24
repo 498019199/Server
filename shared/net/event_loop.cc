@@ -2,6 +2,7 @@
 #include "channel.h"
 #include "poller.h"
 #include "base/logger.h"
+#include "net/timer.h"
 
 const int kPollTimeMs = 10000;
 
@@ -57,4 +58,13 @@ void event_loop::loop()
         event_handling_ = false;
     }
     
+}
+
+timer_queue* event_loop::get_timer()
+{
+    if (nullptr == timer_queue_)
+    {
+        timer_queue_ = new timer_queue(this);
+    }
+    return timer_queue_;
 }
