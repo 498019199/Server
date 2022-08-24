@@ -24,6 +24,17 @@ int64_t get_now_time()
     return re;
 }
 
+
+
+
+timer_event::timer_event(int64_t interval_time, bool is_repeated, event_callback callback)
+        :interval_time_(interval_time), is_repeated_(is_repeated),event_(std::move(callback))
+{
+    arrival_time_ = get_now_time() + interval_time;
+}
+
+
+
 timer_queue::timer_queue(event_loop *loop)
     :timer_fd_(createTimerfd()),
      loop_(loop),
@@ -76,7 +87,7 @@ void timer_queue::reset_active_timer()
     }
     int64_t now = get_now_time();
     auto it = pending_event_.begin();
-    if ((*it).first < now)
+    if (it->first < now)
     {
         LOG_DEBUG<< "all timer events has already expire";
         return;
@@ -136,4 +147,3 @@ void timer_queue::on_timer()
         iter.second();
     }
 }
-

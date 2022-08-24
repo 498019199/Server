@@ -21,7 +21,8 @@ message(STATUS "-std=c++17 -pthread")
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/shared/
-    ${PROJECT_SOURCE_DIR}/shared/other_lib/)
+    ${PROJECT_SOURCE_DIR}/shared/other_lib/
+    ${PROJECT_SOURCE_DIR}/shared/base/C++17/)
 
 set(HEADERS
     ${PROJECT_SOURCE_DIR}/shared/base/*.h
@@ -42,7 +43,7 @@ set(NET_SOURCES
         ${PROJECT_SOURCE_DIR}/shared/net/socket.cc
         ${PROJECT_SOURCE_DIR}/shared/net/tcp/tcp_connection.cc
         ${PROJECT_SOURCE_DIR}/shared/net/tcp/tcp_server.cc
-        ${PROJECT_SOURCE_DIR}/shared/net/timer.cc)
+        ${PROJECT_SOURCE_DIR}/shared/net/timer.cc shared/base/C++17/filessystem.h)
 add_library(SHARED_LIB ${NET_SOURCES})
 
 add_executable(${PROJECT_NAME}

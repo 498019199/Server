@@ -38,8 +38,8 @@ poller::~poller()
 void poller::update_channel(channel* chan)
 {
     const int index = chan->index();
-//    LOG_TRACE << "fd = " << chan->fd()
-//    << " events = " << chan->events() << " index = " << index;
+    LOG_TRACE << "fd = " << chan->fd()
+    << " events = " << chan->events() << " index = " << index;
     if (index == kNew || index == kDeleted)
     {
         // a new one, add with EPOLL_CTL_ADD
@@ -125,7 +125,7 @@ int poller::poll(int timeout, std::vector<channel*>* active_chans)
         if (saved_errno != EINTR)
         {
             errno = saved_errno;
-            LOG_ERROR << "EPollPoller::poll()";
+            LOG_ERROR << "poller::poll()";
         }
     }
 

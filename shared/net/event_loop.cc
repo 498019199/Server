@@ -33,8 +33,6 @@ void event_loop::loop()
 
     while (!quit_)
     {
-        LOG_TRACE << "loop !" << std::endl;
-
         active_chans_.clear();
         int poll_ret_time = poller_->poll(kPollTimeMs, &active_chans_);
 

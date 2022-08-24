@@ -10,10 +10,7 @@ struct timer_event
 {
     typedef std::shared_ptr<timer_event> ptr;
 
-    timer_event(int64_t interval_time, bool is_repeated, event_callback callback)
-            :interval_time_(interval_time), is_repeated_(is_repeated),event_(std::move(callback))
-    {
-    }
+    timer_event(int64_t interval_time, bool is_repeated, event_callback callback);
 
     void run() const
     {
