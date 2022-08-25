@@ -1,7 +1,6 @@
 #include "event_loop.h"
 #include "channel.h"
 #include "poller.h"
-#include "base/logger.h"
 #include "net/timer.h"
 
 const int kPollTimeMs = 10000;

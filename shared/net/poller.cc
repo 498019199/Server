@@ -2,13 +2,13 @@
 #include "channel.h"
 #include "base/logger.h"
 
-#include <assert.h>
+#include <cassert>
 #include <cstring>
 
 #include <poll.h>
 #include <sys/epoll.h>
 #include <unistd.h>
-#include <errno.h>
+#include <cerrno>
 
 // On Linux, the constants of poll(2) and epoll(4)
 // are expected to be the same.
@@ -132,9 +132,9 @@ int poller::poll(int timeout, std::vector<channel*>* active_chans)
     return 0;
 }
 
-void poller::update(int operation, channel* chan)
+void poller::update(int operation, channel* chan) const
 {
-    struct epoll_event event;
+    struct epoll_event event{};
     memset(&event, 0, sizeof event);
     event.events = chan->events();
     event.data.ptr = chan;

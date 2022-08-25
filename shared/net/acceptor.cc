@@ -21,7 +21,7 @@ void acceptor::set_listening()
 void acceptor::handle_read()
 {
     faddress local_addr;
-    struct sockaddr_in6 addr;
+    struct sockaddr_in6 addr {};
     memZero(&addr, sizeof addr);
     int conn_fd =sockets::accept(accept_fd_, &addr);
     if (conn_fd >= 0)

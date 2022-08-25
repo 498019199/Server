@@ -18,7 +18,7 @@ int createTimerfd()
 
 int64_t get_now_time()
 {
-    timeval val;
+    timeval val{};
     gettimeofday(&val, nullptr);
     int64_t re = val.tv_sec * 1000 + val.tv_usec / 1000;
     return re;
@@ -132,7 +132,7 @@ void timer_queue::on_timer()
     }
 
     pending_event_.erase(pending_event_.begin(), it);
-    for( auto iter : tmps)
+    for( const auto& iter : tmps)
     {
         if (iter->is_repeated_)
         {

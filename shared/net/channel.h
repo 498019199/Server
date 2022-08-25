@@ -9,7 +9,7 @@ class channel : noncopyable
     static const int kWriteEvent;
 public:
     channel(event_loop* loop, int fd);
-    ~channel();
+    ~channel() = default;
 
     void handle_event(int receive_time);
     void set_read_callback(read_event_callback cb){ read_callback_ = std::move(cb); }
@@ -22,7 +22,7 @@ public:
     void set_revents(int revt) { revents_ = revt; } // used by pollers
     bool is_no_event() const { return events_ == kNoneEvent;}
     // for Poller
-    int index() { return index_; }
+    int index() const { return index_; }
     void set_index(int idx) { index_ = idx; }
 
     void enable_reeading() { events_ |= kReadEvent; update(); }

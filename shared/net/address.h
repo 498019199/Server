@@ -5,7 +5,7 @@
 #include <netinet/in.h>
 #include <bits/sockaddr.h>
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 class faddress : copyable
@@ -37,7 +37,7 @@ public:
 private:
     union 
     {
-        struct sockaddr sa_;
+        struct sockaddr sa_{};
         struct sockaddr_in addr_;
         struct sockaddr_in6 addr6_;
     };

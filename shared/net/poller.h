@@ -27,7 +27,7 @@ public:
 
     int poll(int timeout, std::vector<channel*>* active_chans);
 private:
-    void update(int operation, channel* chan);
+    void update(int operation, channel* chan) const;
 
     void fill_active_channels(int num_event, std::vector<channel*>* active_chans) const;
 

@@ -19,11 +19,6 @@ channel::channel(event_loop* loop, int fd)
     index_(kNew)
 {}
 
-channel::~channel()
-{
-    
-}
-
 void channel::handle_event(int receive_time)
 {
     event_handling_ = true;
