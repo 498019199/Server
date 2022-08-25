@@ -121,7 +121,7 @@ void async_logger::flush()
 
 void* async_logger::excute(void* arg)
 {
-    async_logger* ptr = reinterpret_cast<async_logger*>(arg);
+    auto ptr = reinterpret_cast<async_logger*>(arg);
     pthread_cond_init(&ptr->condition_, NULL);
     while (1)
     {
@@ -138,9 +138,9 @@ void* async_logger::excute(void* arg)
         ptr->mutex_.unlock();
 
 
-        timeval now;
+        timeval now{};
         gettimeofday(&now, nullptr);
-        struct tm now_time;
+        struct tm now_time{};
         localtime_r(&(now.tv_sec), &now_time);
         const char *format = "%Y%m%d";
         char date[32];

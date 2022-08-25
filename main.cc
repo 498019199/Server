@@ -11,7 +11,7 @@ int main()
 {
     auto path = fs::current_path();
     g_logger = std::make_shared<logger>();
-    g_logger->init("111.log", path.c_str(), 1024, 1);
+    g_logger->init("net", path.c_str(), 1024, 1);
 
     event_loop loop;
     LOG_TRACE << "begin init server";

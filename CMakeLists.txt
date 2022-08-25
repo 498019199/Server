@@ -47,7 +47,7 @@ set(NET_SOURCES
 add_library(SHARED_LIB ${NET_SOURCES})
 
 add_executable(${PROJECT_NAME}
-    main.cc
-)
+    main.cc)
+
 target_link_libraries(${PROJECT_NAME} SHARED_LIB)
 target_link_libraries(${PROJECT_NAME} pthread stdc++fs)
