@@ -43,7 +43,13 @@ set(NET_SOURCES
         ${PROJECT_SOURCE_DIR}/shared/net/socket.cc
         ${PROJECT_SOURCE_DIR}/shared/net/tcp/tcp_connection.cc
         ${PROJECT_SOURCE_DIR}/shared/net/tcp/tcp_server.cc
-        ${PROJECT_SOURCE_DIR}/shared/net/timer.cc shared/base/C++17/filessystem.h)
+        ${PROJECT_SOURCE_DIR}/shared/net/timer.cc
+        ${PROJECT_SOURCE_DIR}/shared/net/http/http_server.cc
+        ${PROJECT_SOURCE_DIR}/shared/net/http/http_context.cc
+        ${PROJECT_SOURCE_DIR}/shared/net/http/http_request.cc
+        ${PROJECT_SOURCE_DIR}/shared/net/http/http_response.cc
+        )
+
 add_library(SHARED_LIB ${NET_SOURCES})
 
 add_executable(${PROJECT_NAME}

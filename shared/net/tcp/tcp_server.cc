@@ -34,7 +34,7 @@ void tcp_server::start()
 void tcp_server::new_connetction(int sockfd, const faddress& addr)
 {
     char buf[64];
-    snprintf(buf, sizeof buf, "-%s:%d#%d", ip.c_str(), port, next_conne_id_);
+    snprintf(buf, sizeof buf, "-%s:%d#%d", ip_.c_str(), port, next_conne_id_);
     ++next_conne_id_;
     std::string conn_name = name_ + buf;
 

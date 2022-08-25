@@ -32,6 +32,11 @@ void tcp_connection::set_state(Connection_State state)
 
 tcp_connection::~tcp_connection()
 {
+    if (context_)
+    {
+        delete context_;
+        context_ = nullptr;
+    }
 }
 
 void tcp_connection::handle_read(int ts)
@@ -66,4 +71,24 @@ void tcp_connection::handle_error()
     int err = sockets::get_socket_error(chan_->fd());
     LOG_ERROR << "TcpConnection::handleError [" << name_
              << "] - SO_ERROR = " << err << " " << strerror(err);
+}
+
+void tcp_connection::send(const StringPiece &msg)
+{
+
+}
+
+void tcp_connection::send(const char *msg, int len)
+{
+    send(StringPiece(static_cast<const char*>(msg), len));
+}
+
+void tcp_connection::send(Buffer *msg)
+{
+
+}
+
+void tcp_connection::shutdown()
+{
+
 }
