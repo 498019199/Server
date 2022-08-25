@@ -14,6 +14,7 @@ class channel;
 class tcp_connection;
 class acceptor;
 class faddress;
+class Buffer;
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -23,7 +24,7 @@ typedef std::shared_ptr<tcp_connection> tcp_connection_ptr;
 typedef std::function<void (const tcp_connection_ptr&)> connnection_callback;
 typedef std::function<void (const tcp_connection_ptr&)> close_callback;
 typedef std::function<void (const tcp_connection_ptr&)> write_complete_callback;
-typedef std::function<void (const tcp_connection_ptr&, std::string, int ts)> message_callback;
+typedef std::function<void (const tcp_connection_ptr&, Buffer*, int ts)> message_callback;
 
 typedef std::function<void()> event_callback;
 typedef std::function<void(int)> read_event_callback;

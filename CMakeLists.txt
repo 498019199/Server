@@ -48,7 +48,7 @@ set(NET_SOURCES
         ${PROJECT_SOURCE_DIR}/shared/net/http/http_context.cc
         ${PROJECT_SOURCE_DIR}/shared/net/http/http_request.cc
         ${PROJECT_SOURCE_DIR}/shared/net/http/http_response.cc
-        )
+        shared/string/Buffer.cc)
 
 add_library(SHARED_LIB ${NET_SOURCES})
 

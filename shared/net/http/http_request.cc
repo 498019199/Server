@@ -82,10 +82,10 @@ void http_request::add_header(const char *start, const char *colon, const char *
     http_header_[field] = value;
 }
 
-std::string http_request::get_header(std::string &key)
+std::string http_request::get_header(const char *key) const
 {
     std::string result;
-    std::map<std::string, std::string>::const_iterator it = http_header_.find(key);
+    auto it = http_header_.find(key);
     if (it != http_header_.end())
     {
         result = it->second;

@@ -1,9 +1,13 @@
 #ifndef __NET_TCP_CONNECTION__H__
 #define __NET_TCP_CONNECTION__H__
+#include <utility>
+
 #include "net/socket.h"
 #include "net/address.h"
 #include "string/StringPiece.h"
 #include "string/Buffer.h"
+
+class http_context;
 
 class tcp_connection:noncopyable,
                     public std::enable_shared_from_this<tcp_connection>
@@ -38,6 +42,9 @@ public:
     void set_message_callback(const message_callback& cb) { message_callback_ = cb;}
     void set_write_complete_callback(const write_complete_callback& cb) { write_complete_callback_ = cb;}
 
+    void send_in_loop(const StringPiece& msg);
+    void send_in_loop(const char* msg, int len);
+
     void send(const char* msg, int len);
     void send(const StringPiece& msg);
     void send(Buffer* msg);
@@ -48,8 +55,8 @@ public:
     void handle_close();
     void handle_error();
 
-    void set_context(void* context) { context_ = context; }
-    void* get_context() { return context_; }
+    void set_context(std::shared_ptr<http_context> context) { context_ = std::move(context); }
+    std::weak_ptr<http_context> get_context() { return context_; }
 private:
     event_loop* loop_;
     std::string name_;
@@ -60,15 +67,15 @@ private:
     const faddress local_addr_;
     const faddress peer_addr_;
     std::unique_ptr<channel> chan_;
-    std::string input_buff_;
-    std::string output_buff_;
+    Buffer input_buff_;
+    Buffer output_buff_;
 
     close_callback close_callback_;
     connnection_callback connnection_callback_;
     message_callback message_callback_;
     write_complete_callback write_complete_callback_;
 
-    void* context_ = nullptr;
+    std::shared_ptr<http_context> context_;
 };
 
 

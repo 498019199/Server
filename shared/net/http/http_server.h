@@ -5,6 +5,7 @@
 
 #include "net/socket.h"
 #include "net/tcp/tcp_server.h"
+#include "string/Buffer.h"
 
 class http_request;
 class http_response;
@@ -25,9 +26,9 @@ public:
 private:
     void on_connection(const tcp_connection_ptr& conn);
 
-    void on_message(const tcp_connection_ptr& com, const std::string& buf, int64_t receive_time);
+    void on_message(const tcp_connection_ptr& com, Buffer* buf, int64_t receive_time);
 
-    void on_request(const http_request& req, const http_response* resp);
+    void on_request(const tcp_connection_ptr& conn, const http_request& req);
 
 private:
     tcp_server server_;

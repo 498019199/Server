@@ -27,6 +27,7 @@ public:
     HttpRequestParseState get_state() { return state_; }
 
     http_request get_http_request() const { return http_request_;}
+    http_request get_http_request()  { return http_request_;}
 private:
     bool process_request_line(const char* start, const char* end);
 

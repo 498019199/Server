@@ -25,39 +25,30 @@ void http_server::on_connection(const tcp_connection_ptr &conn)
 {
     if (conn->is_connected())
     {
-        auto context = new http_context();
+        auto context = std::make_shared<http_context>();
         conn->set_context(context);
     }
 }
 
-void http_server::on_message(const tcp_connection_ptr &conn, const std::string &buf, int64_t receive_time)
+void http_server::on_message(const tcp_connection_ptr &conn, Buffer* buf, int64_t receive_time)
 {
-    if (nullptr == conn->get_context())
-    {
-        return;
-    }
-    auto  context = static_cast<http_context*>(conn->get_context());
-    if (nullptr == context)
-    {
-        return;
-    }
-
-    if (!context->parse_request(buf, receive_time))
+    std::shared_ptr<http_context>  context_ptr = conn->get_context().lock();
+    if (!context_ptr->parse_request(buf, receive_time))
     {
         conn->send("HTTP/1.1 400 Bad Request\r\n\r\n");
         conn->shutdown();
     }
 
-    if (context->gotAll())
+    if (http_context::HttpRequestParseState::kGotAll == context_ptr->get_state())
     {
-        onRequest(conn, context->request());
-        context->reset();
+        on_request(conn, context_ptr->get_http_request());
+        context_ptr->reset();
     }
 }
 
-void http_server::on_request(const http_request &req, const http_response *resp)
+void http_server::on_request(const tcp_connection_ptr &conn, const http_request &req)
 {
-    const std::string& connection = req.he("Connection");
+    const std::string& connection = req.get_header("Connection");
     bool close = connection == "close" ||
                  (req.get_version() == http_request::kHttp10 && connection != "Keep-Alive");
 
@@ -66,8 +57,8 @@ void http_server::on_request(const http_request &req, const http_response *resp)
     Buffer buf;
     response.append_buf(&buf);
 
-    conn_->send(&buf);
-    if (response.set_close_connection(tur))
+    conn->send(&buf);
+    if (response.get_close_connection())
     {
         conn->shutdown();
     }

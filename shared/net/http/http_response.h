@@ -25,6 +25,7 @@ public:
     void set_close_connection(bool on) { close_connection_ = on; }
     void set_body(const std::string& body) { http_body_ = body; }
 
+    bool get_close_connection() const { return close_connection_;}
     void add_header(const std::string& key, const std::string& value) { http_header_[key] = value;}
     void append_buf(Buffer* buf);
 private:
