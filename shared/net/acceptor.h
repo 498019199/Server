@@ -16,11 +16,11 @@ public:
 
     acceptor(event_loop* eve_loop, const faddress& addr, bool reuseport);
 
-    ~acceptor();
+    ~acceptor() = default;
 
     void set_new_connnect_callback(const new_connction_func& func) { new_connction_func_ = func;}
     void set_listening();
-    bool get_listening() { return listening_; }
+    bool get_listening() const { return listening_; }
 
 private:
 

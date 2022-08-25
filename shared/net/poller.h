@@ -17,7 +17,7 @@ class poller
     typedef std::map<int, channel*> channel_map;
     typedef std::vector<struct epoll_event> event_list;
 public:
-    poller(event_loop* loop);
+    explicit poller(event_loop* loop);
 
     ~poller();
 

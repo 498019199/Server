@@ -248,12 +248,6 @@ void logger::init(const char* file_name, const char* file_path, int max_size, in
     }
 }
 
-void logger::start(event_loop *loop, int sync_inteval)
-{
-    timer_event::ptr event = std::make_shared<timer_event>(sync_inteval, true, std::bind(&logger::loop, this));
-    loop->get_timer()->add_timer(event, true);
-}
-
 void logger::log()
 {}
 
@@ -262,6 +256,8 @@ void logger::push_log(const std::string& msg)
     mutex_.lock();
     buffs_.push_back(msg);
     mutex_.unlock();
+
+    loop();
 }
 
 void logger::loop()

@@ -1,9 +1,9 @@
 #include "address.h"
 #include "base/logger.h"
 
-#include <string.h>
+#include <cstring>
 #include <endian.h>
-#include <assert.h>
+#include <cassert>
 #include<arpa/inet.h>
 
 //faddress---------------------------------------------------------------------

@@ -13,9 +13,6 @@ acceptor::acceptor(event_loop* eve_loop, const faddress& addr, bool reuseport)
     sockets::bind(accept_fd_, addr.get_sockaddr());
 }
 
-acceptor::~acceptor()
-{}
-
 void acceptor::set_listening()
 {
     listening_ = true;

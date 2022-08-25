@@ -14,7 +14,6 @@ int main()
     g_logger->init("111.log", path.c_str(), 1024, 1);
 
     event_loop loop;
-    g_logger->start(&loop, 1);
     LOG_TRACE << "begin init server";
 
     faddress server_addr("127.0.0.1", 6379);

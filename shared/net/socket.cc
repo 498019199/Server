@@ -2,13 +2,10 @@
 #include "base/type.h"
 #include "base/logger.h"
 
-#include <string.h>  // memset
-
 #include <unistd.h>
 #include <sys/uio.h>  // readv
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <stdio.h>  // snprintf
 
 namespace sockets
 {
@@ -50,7 +47,7 @@ void listen(int sockfd)
 
 int accept(int sockfd, struct sockaddr_in6* addr)
 {
-    socklen_t addrlen = static_cast<socklen_t>(sizeof *addr);
+    auto addrlen = static_cast<socklen_t>(sizeof *addr);
     int connfd = ::accept(sockfd, sockaddr_cast(addr), &addrlen);
     return connfd;
 }
@@ -116,9 +113,9 @@ void set_keep_alive(int sockfd, bool on)
 
 struct sockaddr_in6 get_addr(int sockfd)
 {
-    struct sockaddr_in6 addr;
+    struct sockaddr_in6 addr{};
     memZero(&addr, sizeof addr);
-    socklen_t addrlen = static_cast<socklen_t>(sizeof addr);
+    auto addrlen = static_cast<socklen_t>(sizeof addr);
     if (::getsockname(sockfd, sockaddr_cast(&addr), &addrlen) < 0)
     {
         LOG_ERROR << "sockets::getLocalAddr";
@@ -130,7 +127,7 @@ struct sockaddr_in6 get_addr(int sockfd)
 int get_socket_error(int sockfd)
 {
     int optval;
-    socklen_t optlen = static_cast<socklen_t>(sizeof optval);
+    auto optlen = static_cast<socklen_t>(sizeof optval);
     if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0)
     {
         return errno;

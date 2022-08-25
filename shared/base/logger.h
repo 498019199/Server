@@ -109,8 +109,6 @@ public:
 
     void init(const char* file_name, const char* file_path, int max_size, int sync_inteval);
 
-    void start(event_loop* , int sync_inteval);
-
     void log();
 
     void push_log(const std::string& msg);
