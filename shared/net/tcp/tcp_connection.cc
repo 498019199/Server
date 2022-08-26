@@ -3,9 +3,7 @@
 #include "base/logger.h"
 
 #include<memory>
-#include <string.h>
-
-#include <error.h>
+#include <cstring>
 
 tcp_connection::tcp_connection(event_loop* loop,
                     const char* name,
@@ -15,13 +13,23 @@ tcp_connection::tcp_connection(event_loop* loop,
                     :loop_(loop),
                     name_(name),
                     reading_(true),
-                    state_(kConnected),
+                    state_(kConnecting),
                     sock_fd_(sockfd),
                     local_addr_(local_addr),
                     peer_addr_(peer_addr),
                     chan_(new channel(loop, sockfd))
 {
-    
+    chan_->set_read_callback(
+            std::bind(&tcp_connection::handle_read, this, _1));
+    chan_->set_write_callback(
+            std::bind(&tcp_connection::handle_write, this));
+    chan_->set_close_callback(
+            std::bind(&tcp_connection::handle_close, this));
+    chan_->set_error_callback(
+            std::bind(&tcp_connection::handle_error, this));
+    LOG_DEBUG << "tcp_connection::ctor[" <<  name_ << "] at " << this
+              << " fd=" << sockfd;
+    sockets::set_keep_alive(sockfd, true);
 }
 
 
@@ -32,6 +40,10 @@ void tcp_connection::set_state(Connection_State state)
 
 tcp_connection::~tcp_connection()
 {
+    LOG_DEBUG << "TcpConnection::dtor[" <<  name_ << "] at " << this
+              << " fd=" << chan_->fd()
+              << " state=" << state_to_string();
+    assert(state_ == kDisconnected);
 }
 
 void tcp_connection::handle_read(int ts)
@@ -55,10 +67,53 @@ void tcp_connection::handle_read(int ts)
 }
 
 void tcp_connection::handle_write()
-{}
+{
+    if (chan_->is_writing())
+    {
+        ssize_t n = sockets::write(chan_->fd(),
+                                   output_buff_.peek(),
+                                   output_buff_.readableBytes());
+        if (n > 0)
+        {
+            output_buff_.retrieve(n);
+            if (output_buff_.readableBytes() == 0)
+            {
+                chan_->disable_writing();
+                if (write_complete_callback_)
+                {
+                    write_complete_callback_(shared_from_this());
+                }
+                if (state_ == kDisconnecting)
+                {
+                    sockets::shutdown_write(sock_fd_);
+                }
+            }
+        }
+        else
+        {
+            LOG_TRACE << "tcp_connection::handle_write";
+        }
+    }
+    else
+    {
+        LOG_TRACE << "Connection fd = " << chan_->fd()
+                  << " is down, no more writing";
+    }
+}
 
 void tcp_connection::handle_close()
-{}
+{
+    LOG_TRACE << "fd = " << chan_->fd() << " state = " << state_to_string();
+    assert(state_ == kConnected || state_ == kDisconnecting);
+    // we don't close fd, leave it to dtor, so we can find leaks easily.
+    set_state(kDisconnected);
+    chan_->disable_all();
+
+    tcp_connection_ptr guardThis(shared_from_this());
+    connnection_callback_(guardThis);
+    // must be the last line
+    close_callback_(guardThis);
+}
 
 void tcp_connection::handle_error()
 {
@@ -156,4 +211,43 @@ void tcp_connection::send_in_loop(const char *msg, int len)
 //            chan_->enable_writing();
 //        }
 //    }
+}
+
+const char *tcp_connection::state_to_string() const
+{
+    switch (state_)
+    {
+        case kDisconnected:
+            return "kDisconnected";
+        case kConnecting:
+            return "kConnecting";
+        case kConnected:
+            return "kConnected";
+        case kDisconnecting:
+            return "kDisconnecting";
+        default:
+            return "unknown state";
+    }
+
+    return "";
+}
+
+void tcp_connection::connect_established()
+{
+    assert(state_ == kConnecting);
+    set_state(kConnected);
+    chan_->tie(shared_from_this());
+    chan_->enable_reeading();
+    connnection_callback_(shared_from_this());
+}
+
+void tcp_connection::connect_destroyed()
+{
+    if (state_ == kConnected)
+    {
+        set_state(kDisconnected);
+        chan_->disable_all();
+        connnection_callback_(shared_from_this());
+    }
+    chan_->remove();
 }

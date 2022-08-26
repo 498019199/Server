@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 project(demo_rpc)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexec-charset=utf-8")
 
+# 平台宏
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     message(STATUS "current platform: Linux")
     add_definitions(-DPLATFORM_LINUX)
@@ -14,6 +15,17 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 else()
     message(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")
 endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+# 编译模式
+if(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+    message("Debug mode:${CMAKE_C_FLAGS_DEBUG}")
+    add_definitions(-DMODE_DEBUG)
+elseif(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
+    message("Release mode:${CMAKE_C_FLAGS_RELEASE}")
+else()
+    message("else:${CMAKE_BUILD_TYPE}")
+    message("else:${CMAKE_C_FLAGS_RELEASE}")
+endif()
 
 # 设置c++库版本
 set(CMAKE_CXX_FLAGS, "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")

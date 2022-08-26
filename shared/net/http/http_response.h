@@ -33,7 +33,7 @@ private:
     HttpStatusCode http_state_;
 
     std::string status_message_;
-    bool close_connection_;
+    bool close_connection_ = false;
     std::string http_body_;
 };
 

@@ -16,7 +16,7 @@ http_server::http_server(event_loop *loop, const faddress &addr, const char *nam
 
 void http_server::start()
 {
-    LOG_TRACE << "HttpServer[" << server_.name()
+    LOG_TRACE << "http_server[" << server_.name()
              << "] starts listening on " << server_.ip();
     server_.start();
 }

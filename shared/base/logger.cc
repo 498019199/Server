@@ -8,6 +8,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <pthread.h>
+#include <iostream>
 
 extern logger::ptr g_logger;
 void core_dump_handler(int signal_no)
@@ -197,6 +198,9 @@ void* async_logger::excute(void* arg)
         for(auto i : tmp)
         {
             fwrite(i.c_str(), 1, i.length(), ptr->file_handle_);
+#if defined(MODE_DEBUG)
+            std::cout << i.c_str() << std::endl;
+#endif//MODE_DEBUG
             // printf("succ write rt %d bytes ,[%s] to file[%s]", rt, i.c_str(), full_file_name.c_str());
         }
         fflush(ptr->file_handle_);

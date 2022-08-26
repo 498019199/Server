@@ -93,3 +93,9 @@ void channel::remove()
     add_to_loop_ = false;
     loop_->remove_channel(this);
 }
+
+void channel::tie(const std::shared_ptr<void> &obj)
+{
+    tie_ = obj;
+    tied_ = true;
+}

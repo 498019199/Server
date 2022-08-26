@@ -17,6 +17,10 @@ public:
     void set_close_callback(event_callback cb){ close_callback_ = std::move(cb); }
     void set_error_callback(event_callback cb){ error_callback_ = std::move(cb); }
 
+    /// Tie this channel to the owner object managed by shared_ptr,
+    /// prevent the owner object being destroyed in handleEvent.
+    void tie(const std::shared_ptr<void>&);
+
     int fd() const { return fd_; }
     int events() const { return events_; }
     void set_revents(int revt) { revents_ = revt; } // used by pollers
@@ -57,5 +61,8 @@ private:
     event_callback write_callback_;
     event_callback close_callback_;
     event_callback error_callback_;
+
+    std::weak_ptr<void> tie_;
+    bool tied_ = false;
 };
 #endif//__NET_CHANNEL__H__

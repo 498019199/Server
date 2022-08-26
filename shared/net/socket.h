@@ -56,6 +56,7 @@ namespace sockets
     const struct sockaddr_in* sockaddr_in_cast(const struct sockaddr* addr);
     const struct sockaddr_in6* sockaddr_in6_cast(const struct sockaddr* addr);
 
+    void shutdown_write(int fd);
 };
 
 

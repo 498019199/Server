@@ -159,7 +159,7 @@ void poller::fill_active_channels(int num_event, std::vector<channel*>* active_c
     assert(static_cast<size_t>(num_event) <= events_.size());
     for (int i = 0; i < num_event; ++i)
     {
-        channel* chan = static_cast<channel*>(events_[i].data.ptr);
+        auto chan = static_cast<channel*>(events_[i].data.ptr);
         int fd = chan->fd();
         auto it = chans_.find(fd);
         assert(it != chans_.end());

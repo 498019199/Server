@@ -14,7 +14,7 @@ class acceptor:noncopyable
 public:
     typedef std::function<void(int sockfd, const faddress&)> new_connction_func;
 
-    acceptor(event_loop* eve_loop, const faddress& addr, bool reuseport);
+    acceptor(event_loop* loop, const faddress& addr, bool reuseport);
 
     ~acceptor() = default;
 

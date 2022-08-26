@@ -163,5 +163,10 @@ const struct sockaddr_in6* sockaddr_in6_cast(const struct sockaddr* addr)
   return static_cast<const struct sockaddr_in6*>(implicit_cast<const void*>(addr));
 }
 
+void shutdown_write(int sockfd)
+{
+    ::shutdown(sockfd, SHUT_WR);
+}
+
 
 }

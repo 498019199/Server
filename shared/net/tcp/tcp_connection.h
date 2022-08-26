@@ -37,13 +37,11 @@ public:
     bool is_disconnected() { return kDisconnected == state_; }
 
     void set_state(Connection_State state);
-    void set_close_callback(const close_callback& cb) { connnection_callback_ = cb;}
+
+    void set_close_callback(const close_callback& cb) { close_callback_ = cb;}
     void set_connection_callback(const connnection_callback& cb) { connnection_callback_ = cb;}
     void set_message_callback(const message_callback& cb) { message_callback_ = cb;}
     void set_write_complete_callback(const write_complete_callback& cb) { write_complete_callback_ = cb;}
-
-    void send_in_loop(const StringPiece& msg);
-    void send_in_loop(const char* msg, int len);
 
     void send(const char* msg, int len);
     void send(const StringPiece& msg);
@@ -57,6 +55,16 @@ public:
 
     void set_context(std::shared_ptr<http_context> context) { context_ = std::move(context); }
     std::weak_ptr<http_context> get_context() { return context_; }
+
+    // called when TcpServer accepts a new connection
+    void connect_established();   // should be called only once
+    // called when TcpServer has removed me from its map
+    void connect_destroyed();  // should be called only once
+private:
+
+    const char* state_to_string() const;
+
+    void send_in_loop(const char* msg, int len);
 private:
     event_loop* loop_;
     std::string name_;

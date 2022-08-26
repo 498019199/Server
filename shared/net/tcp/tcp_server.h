@@ -38,7 +38,7 @@ private:
 private:
     std::string name_;
     std::string ip_;
-    int port;
+    int port_;
     std::unique_ptr<acceptor> acceptor_;
     int next_conne_id_;
 

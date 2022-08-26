@@ -1,6 +1,5 @@
 
 #include <cassert>
-#include <algorithm>
 #include "http_request.h"
 
 http_request::http_request()
