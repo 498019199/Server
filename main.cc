@@ -75,15 +75,15 @@ int main()
     g_logger->init("net", path.c_str(), 1024*1024*50, 1);
 
     event_loop loop;
-    LOG_TRACE << "begin init server";
+    LOG_DEBUG << "begin init server";
 
     faddress server_addr("127.0.0.1", 6379);
     //echo_server server(&loop, server_addr);
     http_server server(&loop, server_addr, "test");
     server.set_http_callback(on_request);
-    LOG_TRACE << "begin start server";
+    LOG_DEBUG << "begin start server";
     server.start();
-    LOG_TRACE << "begin loop server";
+    LOG_DEBUG << "begin loop server";
     loop.loop();
     return 0;
 }

@@ -100,7 +100,7 @@ void poller::remove_channel(channel* chan)
 
 int poller::poll(int timeout, std::vector<channel*>* active_chans)
 {
-    LOG_TRACE << "fd total count " << chans_.size();
+    LOG_DEBUG << "fd total count " << chans_.size();
     int event_num = ::epoll_wait(epoll_fd_,
                                 &*events_.begin(),
                                 static_cast<int>(events_.size()),
@@ -117,7 +117,7 @@ int poller::poll(int timeout, std::vector<channel*>* active_chans)
     }
     else if (event_num == 0)
     {
-        LOG_TRACE << "nothing happened";
+        LOG_DEBUG << "nothing happened";
     }
     else
     {
