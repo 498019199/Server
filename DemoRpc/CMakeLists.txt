@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.2)
 project(demo_rpc)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexec-charset=utf-8")
 
+set(OUT_PATH ${PROJECT_SOURCE_DIR})
+message(STATUS ${OUT_PATH})
+set(EXECUTABLE_OUTPUT_PATH ${OUTPUT_PATH})
+message(STATUS ${EXECUTABLE_OUTPUT_PATH})
+
 # 平台宏
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     message(STATUS "current platform: Linux")
@@ -27,21 +32,30 @@ else()
     message("else:${CMAKE_C_FLAGS_RELEASE}")
 endif()
 
+#find_package(Protobuf REQUIRED)
+#find_package(Threads REQUIRED)
+
+#find_library(PROTOC_LIB NAMES protoc)
+#if(NOT PROTOC_LIB)
+#    message(FATAL_ERROR "Fail to find protoc lib")
+#endif()
+
 # 设置c++库版本
 set(CMAKE_CXX_FLAGS, "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")
 message(STATUS "-std=c++17 -pthread")
 
 include_directories(
-    ${PROJECT_SOURCE_DIR}/shared/
-    ${PROJECT_SOURCE_DIR}/shared/other_lib/
-    ${PROJECT_SOURCE_DIR}/shared/base/C++17/)
+        ${PROTOBUF_INCLUDE_DIRS}
+        ${PROJECT_SOURCE_DIR}/shared/
+        ${PROJECT_SOURCE_DIR}/shared/other_lib/
+        ${PROJECT_SOURCE_DIR}/shared/base/C++17/)
 
-set(HEADERS
+set(LIB_HEADERS
     ${PROJECT_SOURCE_DIR}/shared/base/*.h
     ${PROJECT_SOURCE_DIR}/shared/net/*.h
   )
 
-set(NET_SOURCES
+set(LIB_SOURCES
         ${PROJECT_SOURCE_DIR}/shared/base/logger.cc
         ${PROJECT_SOURCE_DIR}/shared/base/condition_variable.cc
 
@@ -60,12 +74,12 @@ set(NET_SOURCES
         ${PROJECT_SOURCE_DIR}/shared/net/http/http_context.cc
         ${PROJECT_SOURCE_DIR}/shared/net/http/http_request.cc
         ${PROJECT_SOURCE_DIR}/shared/net/http/http_response.cc
-        shared/string/Buffer.cc)
+        ${PROJECT_SOURCE_DIR}/shared/string/Buffer.cc)
 
-add_library(SHARED_LIB ${NET_SOURCES})
+add_library(${PROJECT_NAME}
+        SHARED
+        ${LIB_SOURCES})
 
-add_executable(${PROJECT_NAME}
-    main.cc)
-
-target_link_libraries(${PROJECT_NAME} SHARED_LIB)
+#添加通用库
 target_link_libraries(${PROJECT_NAME} pthread stdc++fs)
+#target_link_libraries(${PROJECT_NAME} pthread stdc++fs protobuf protoc)
