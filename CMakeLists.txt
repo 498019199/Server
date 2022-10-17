@@ -47,6 +47,6 @@ message(STATUS ${LIBRARY_OUTPUT_PATH})
 message(STATUS ${EXECUTABLE_OUTPUT_PATH})
 
 # 代码子目录
-add_subdirectory(http)
+add_subdirectory(demo_rpc)
 #add_subdirectory(net)
 #add_subdirectory(server_rpc)

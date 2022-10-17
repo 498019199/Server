@@ -1,15 +1,3 @@
-#find_package(Protobuf REQUIRED)
-#find_package(Threads REQUIRED)
-
-#find_library(PROTOC_LIB NAMES protoc)
-#if(NOT PROTOC_LIB)
-#    message(FATAL_ERROR "Fail to find protoc lib")
-#endif()
-
-# …Ë÷√c++ø‚∞Ê±æ
-set(CMAKE_CXX_FLAGS, "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")
-message(STATUS "-std=c++17 -pthread")
-
 include_directories(
         ${PROTOBUF_INCLUDE_DIRS}/
         ${PROJECT_SOURCE_DIR}/)
@@ -21,7 +9,6 @@ set(LIB_HEADERS
         net/address.h)
 set(LIB_SOURCES
         ${PROJECT_SOURCE_DIR}/base/logger.cc
-        ${PROJECT_SOURCE_DIR}/base/condition_variable.cc
         ${PROJECT_SOURCE_DIR}/net/acceptor.cc
         ${PROJECT_SOURCE_DIR}/net/address.cc
         ${PROJECT_SOURCE_DIR}/net/channel.cc

@@ -5,7 +5,6 @@
 #include <queue>
 #include <memory>
 
-#include "lock.h"
 #include "../../network/include/event_loop.h"
 
 enum LogLevel
@@ -94,8 +93,8 @@ private:
     FILE* file_handle_ = nullptr;
     bool is_stop_ = false;
 
-    mutex_lock mutex_;
-    pthread_cond_t condition_;
+    std::mutex_lock mutex_;
+    std::condition_variable condition_;
 };
 
 class logger
