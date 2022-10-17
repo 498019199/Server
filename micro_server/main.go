@@ -1,1 +1,7 @@
-package micro_server
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("test go")
+}
