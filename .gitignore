@@ -1,10 +1,6 @@
 /.idea
 /cmake-build-debug-linux-centos8
-/res/ini
-/res/debug64
-/include/net
-/include/other_lib/ini
-/include/other_lib/protobuf
-
+/build
+/micro_server/.idea
 
 

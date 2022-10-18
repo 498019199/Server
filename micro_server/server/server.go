@@ -1,10 +1,14 @@
-package rpc
+package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
+	"micro_server/rpc"
 	"net"
+	"reflect"
+	"sync"
 )
 
 type Server struct{}
@@ -12,13 +16,13 @@ type Server struct{}
 const MagicNumber = 0x3bef5c
 
 type Option struct {
-	MagicNumber int        // MagicNumber marks this's a geerpc request
-	Type        Proxy. // client may choose different Codec to encode body
+	MagicNumber int      // MagicNumber marks this's a geerpc request
+	Type        rpc.Type // client may choose different Codec to encode body
 }
 
 var DefaultOption = &Option{
 	MagicNumber: MagicNumber,
-	CodecType:   codec.GobType,
+	Type:        rpc.GobType,
 }
 
 func NewServer() *Server {
@@ -52,25 +56,82 @@ func (server *Server) ServerConn(conn io.ReadWriteCloser) {
 		log.Printf("rpc server: invalid magic number %x", opt.MagicNumber)
 		return
 	}
-	f := codec.NewCodecFuncMap[opt.CodecType]
+	f := rpc.NewProxyFuncMap[opt.Type]
 	if f == nil {
-		log.Printf("rpc server: invalid codec type %s", opt.CodecType)
+		log.Printf("rpc server: invalid codec type %s", opt.Type)
 		return
 	}
-	server.serveCodec(f(conn))
+	server.Proxy(f(conn))
 }
 
-//读取请求
-func (server *Server) ReadRequest(conn io.ReadWriteCloser) {
+// invalidRequest is a placeholder for response argv when error occurs
+var invalidRequest = struct{}{}
 
+func (server *Server) Proxy(cc rpc.Proxy) {
+	sending := new(sync.Mutex) // make sure to send a complete response
+	wg := new(sync.WaitGroup)  // wait until all request are handled
+	for {
+		req, err := server.readRequest(cc)
+		if err != nil {
+			if req == nil {
+				break // it's not possible to recover, so close the connection
+			}
+			req.h.Error = err.Error()
+			server.sendResponse(cc, req.h, invalidRequest, sending)
+			continue
+		}
+		wg.Add(1)
+		go server.handleRequest(cc, req, sending, wg)
+	}
+	wg.Wait()
+	_ = cc.Close()
 }
 
-// 处理请求
-func (server *Server) handleRequest(conn io.ReadWriteCloser) {
+type request struct {
+	h            *rpc.Header   // header of request
+	argv, replyv reflect.Value // argv and replyv of request
+}
 
+func (server *Server) readRequestHeader(cc rpc.Proxy) (*rpc.Header, error) {
+	var h rpc.Header
+	if err := cc.ReadHeader(&h); err != nil {
+		if err != io.EOF && err != io.ErrUnexpectedEOF {
+			log.Println("rpc server: read header error:", err)
+		}
+		return nil, err
+	}
+	return &h, nil
+}
+
+func (server *Server) readRequest(cc rpc.Proxy) (*request, error) {
+	h, err := server.readRequestHeader(cc)
+	if err != nil {
+		return nil, err
+	}
+	req := &request{h: h}
+	// TODO: now we don't know the type of request argv
+	// day 1, just suppose it's string
+	req.argv = reflect.New(reflect.TypeOf(""))
+	if err = cc.ReadBody(req.argv.Interface()); err != nil {
+		log.Println("rpc server: read argv err:", err)
+	}
+	return req, nil
+}
+
+func (server *Server) sendResponse(cc rpc.Proxy, h *rpc.Header, body interface{}, sending *sync.Mutex) {
+	sending.Lock()
+	defer sending.Unlock()
+	if err := cc.Write(h, body); err != nil {
+		log.Println("rpc server: write response error:", err)
+	}
 }
 
 // 回复请求
-func (server *Server) sendResponse(conn io.ReadWriteCloser) {
-
+func (server *Server) handleRequest(cc rpc.Proxy, req *request, sending *sync.Mutex, wg *sync.WaitGroup) {
+	// TODO, should call registered rpc methods to get the right replyv
+	// day 1, just print argv and send a hello message
+	defer wg.Done()
+	log.Println(req.h, req.argv.Elem())
+	req.replyv = reflect.ValueOf(fmt.Sprintf("geerpc resp %d", req.h.Seq))
+	server.sendResponse(cc, req.h, req.replyv.Interface(), sending)
 }
