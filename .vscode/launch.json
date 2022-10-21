@@ -15,6 +15,15 @@
                 "GOROOT": "",
             },
             "args": []
+        },
+        {
+            "name": "tools",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/micro_server/tools/tools.py",
+            "args": [],
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }
