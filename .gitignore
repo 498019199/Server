@@ -1,6 +1,6 @@
-/.idea
 /cmake-build-debug-linux-centos8
 /build
-/micro_server
+/tmp
 
-
+/micro_server/.idea
+/tools
